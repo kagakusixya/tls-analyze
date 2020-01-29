@@ -7,3 +7,8 @@ class TLS_Analyze:
         self.content_type = {"change_cipher_spec": b'\x14', "alert": b'\x15',
                              "handshake": b'\x16', "application_data": b'\x17'}
         self.protocol_version = {"TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
+
+    def TLS_Record_Layer(self):
+        self.content_type = self.content_type["handshake"]
+        self.version = self.protocol_version["TLS1.0"]
+        self.length = b'\x00\x00'
