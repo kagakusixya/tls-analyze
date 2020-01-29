@@ -12,3 +12,6 @@ class TLS_Analyze:
         self.content_type = self.content_type["handshake"]
         self.version = self.protocol_version["TLS1.0"]
         self.length = b'\x00\x00'
+
+    def TLS_Record_Layer_bytes(self):
+        data = self.content_type + self.version + self.length
