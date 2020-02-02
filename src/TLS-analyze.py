@@ -39,11 +39,13 @@ class TLS_Analyze:
         self.compression_methods_length = b'\x01'
         self.compression_methods = b'\x00'
         self.extension_length = b'\x00\x00'
+        self.extensions = b''
 
     def Handshake_Body_byte(self):
         byte_data = self.handshak_version + self.random + self.session_id_length + self.session_id + \
             self.ciper_suites_length + self.ciper_suites + \
-            self.compression_methods_length + self.compression_methods + self.extension_length
+            self.compression_methods_length + self.compression_methods + \
+            self.extension_length + self.extensions
         return byte_data
 
     def Extension(self):
@@ -55,8 +57,9 @@ class TLS_Analyze:
         self.signature_algorithms = b'\x00\x0d\x00\x20\x00\x1e\x06\x01\x06\x02\x06\x03\x05\x01\x05\x02\x05\x03\x04\x01\x04\x02\x04\x03\x03\x01\x03\x02\x03\x03\x02\x01\x02\x02\x02\x03'
 
     def Extension_byte(self):
-        self.ec_point_formats + self.supported_groups + self.sessionticket_tls + \
+        byte_data = self.ec_point_formats + self.supported_groups + self.sessionticket_tls + \
             self.encrypt_then_mac + self.extended_master_secret + self.signature_algorithms
+        return byte_data
 
     def ssl_len(self):
         self.extension_length = len(
@@ -99,7 +102,8 @@ def main():
         tls.TLS_Record_Layer()
         tls.Handshake_Header()
         tls.Handshake_Body()
-        tls.Extension_byte()
+        tls.Extension()
+        tls.extensions = tls.Extension_byte()
         tls.ssl_len()
         tls_byte = tls.TLS_Record_Layer_byte() + tls.Handshake_Header_byte() + \
             tls.Handshake_Body_byte()
