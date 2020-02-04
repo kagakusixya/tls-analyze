@@ -8,13 +8,14 @@ class TLS_Analyze:
         self.Define()
 
     def Define(self):
-        self.content_type = {"change_cipher_spec": b'\x14', "alert": b'\x15',
-                             "handshake": b'\x16', "application_data": b'\x17'}
-        self.protocol_version = {"TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
+        self.define_content_type = {"change_cipher_spec": b'\x14', "alert": b'\x15',
+                                    "handshake": b'\x16', "application_data": b'\x17'}
+        self.define_protocol_version = {
+            "TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
 
     def TLS_Record_Layer(self):
-        self.content_type = self.content_type["handshake"]
-        self.version = self.protocol_version["TLS1.0"]
+        self.content_type = self.define_content_type["handshake"]
+        self.version = self.define_protocol_version["TLS1.0"]
         self.length = b'\x00\x00'
 
     def TLS_Record_Layer_byte(self):
@@ -30,7 +31,7 @@ class TLS_Analyze:
         return byte_data
 
     def Handshake_Body(self):
-        self.handshak_version = self.protocol_version["TLS1.2"]
+        self.handshak_version = self.define_protocol_version["TLS1.2"]
         self.random = self.make_random()
         self.session_id_length = b'\x00'
         self.session_id = b''
@@ -62,22 +63,29 @@ class TLS_Analyze:
         return byte_data
 
     def ssl_len(self):
-        self.extension_length = len(
-            self.Extension_byte()).to_bytes(2, 'big')  # length is 2
-        self.compression_methods_length = len(
-            self.compression_methods).to_bytes(1, 'big')  # length is 1
 
-        self.session_id_length = len(
-            self.session_id).to_bytes(1, 'big')  # length is 2
+        if hasattr(self, 'extension_length'):
+            self.extension_length = len(
+                self.Extension_byte()).to_bytes(2, 'big')  # length is 2
 
-        self.ciper_suites_length = len(
-            self.ciper_suites).to_bytes(2, 'big')  # length is 2
+        if hasattr(self, 'compression_methods_length'):
+            self.compression_methods_length = len(
+                self.compression_methods).to_bytes(1, 'big')  # length is 1
 
-        self.handshak_length = len(
-            self.Handshake_Body_byte()).to_bytes(3, 'big')
+        if hasattr(self, 'session_id_length'):
+            self.session_id_length = len(
+                self.session_id).to_bytes(1, 'big')  # length is 2
 
-        self.length = len(self.Handshake_Header_byte() +
-                          self.Handshake_Body_byte()).to_bytes(2, 'big')
+        if hasattr(self, 'ciper_suites_length'):
+            self.ciper_suites_length = len(
+                self.ciper_suites).to_bytes(2, 'big')  # length is 2
+
+        if hasattr(self, 'handshak_length'):
+            self.handshak_length = len(
+                self.Handshake_Body_byte()).to_bytes(3, 'big')
+        if self.content_type == self.define_content_type["handshake"]:
+            self.length = len(self.Handshake_Header_byte() +
+                              self.Handshake_Body_byte()).to_bytes(2, 'big')
 
     def make_random(self):
         sum = b""
