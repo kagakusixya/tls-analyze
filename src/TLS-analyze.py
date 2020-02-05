@@ -67,26 +67,27 @@ class TLS_Analyze:
 
         if hasattr(self, 'extension_length'):
             self.extension_length = len(
-                self.Extension_byte()).to_bytes(2, 'big')  # length is 2
+                self.Extension_byte()).to_bytes(self.define_size["extension_length"], 'big')  # length is 2
 
         if hasattr(self, 'compression_methods_length'):
             self.compression_methods_length = len(
-                self.compression_methods).to_bytes(1, 'big')  # length is 1
+                self.compression_methods).to_bytes(self.define_size["compression_methods_length"], 'big')  # length is 1
 
         if hasattr(self, 'session_id_length'):
             self.session_id_length = len(
-                self.session_id).to_bytes(1, 'big')  # length is 2
+                self.session_id).to_bytes(self.define_size["session_id"], 'big')  # length is 2
 
         if hasattr(self, 'ciper_suites_length'):
             self.ciper_suites_length = len(
-                self.ciper_suites).to_bytes(2, 'big')  # length is 2
+                self.ciper_suites).to_bytes(self.define_size["ciper_suites_length"], 'big')  # length is 2
 
         if hasattr(self, 'handshak_length'):
             self.handshak_length = len(
-                self.Handshake_Body_byte()).to_bytes(3, 'big')
+                self.Handshake_Body_byte()).to_bytes(self.define_size["handshak_length"], 'big')
+
         if self.content_type == self.define_content_type["handshake"]:
             self.length = len(self.Handshake_Header_byte() +
-                              self.Handshake_Body_byte()).to_bytes(2, 'big')
+                              self.Handshake_Body_byte()).to_bytes(self.define_size["length"], 'big')
 
     def make_random():
         sum = b""
