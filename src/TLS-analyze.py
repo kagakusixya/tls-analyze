@@ -12,6 +12,7 @@ class TLS_Analyze:
                                     "handshake": b'\x16', "application_data": b'\x17'}
         self.define_protocol_version = {
             "TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
+        self.define_size{"length": 2, "handshak_length": 3, "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
 
     def TLS_Record_Layer(self):
         self.content_type = self.define_content_type["handshake"]
@@ -94,15 +95,15 @@ class TLS_Analyze:
             sum = x.to_bytes(1, 'big') + bytes(sum)
         return sum
 
-    def packet_analyze(self,tls_analyze,str):
+    def packet_analyze(self, tls_analyze, str):
         return tls_analyze
 
-
-    def separate_str(str,len):
+    def separate_str(str, len):
         separate_data = b''
         for i in range(len):
             separate_data = str[i] + separate_data
     return
+
 
 def main():
     port = 443
