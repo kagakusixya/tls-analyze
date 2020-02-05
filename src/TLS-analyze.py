@@ -96,15 +96,11 @@ class TLS_Analyze:
             sum = x.to_bytes(1, 'big') + bytes(sum)
         return sum
 
-    def packet_analyze(self, tls_analyze, str):
-        return tls_analyze
-
     def separate_str(str, len):
         separate_data = b''
         for i in range(len):
             separate_data = str[i] + separate_data
-    return
-
+        return separate_data
 
 def main():
     port = 443
