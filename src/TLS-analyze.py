@@ -32,7 +32,7 @@ class TLS_Analyze:
 
     def Handshake_Body(self):
         self.handshak_version = self.define_protocol_version["TLS1.2"]
-        self.random = self.make_random()
+        self.random = make_random()
         self.session_id_length = b'\x00'
         self.session_id = b''
         self.ciper_suites_length = b''
@@ -87,12 +87,18 @@ class TLS_Analyze:
             self.length = len(self.Handshake_Header_byte() +
                               self.Handshake_Body_byte()).to_bytes(2, 'big')
 
-    def make_random(self):
+    def make_random():
         sum = b""
         for i in range(32):
             x = random.randrange(256)
             sum = x.to_bytes(1, 'big') + bytes(sum)
         return sum
+
+    def separate_str(str, len):
+        separate_data = b''
+        for i in range(len):
+            separate_data = str[i] + separate_data
+    return
 
 
 def main():
