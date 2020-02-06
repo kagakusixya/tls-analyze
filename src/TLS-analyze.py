@@ -96,9 +96,9 @@ class TLS_Analyze:
             sum = x.to_bytes(1, 'big') + bytes(sum)
         return sum
 
-    def separate_str(str, len):
+    def separate_str(str,len_start,len):
         separate_data = b''
-        for i in range(len):
+        for i in range(len_start,len):
             separate_data = str[i] + separate_data
         return separate_data
 
