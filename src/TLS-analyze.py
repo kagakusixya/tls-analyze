@@ -12,7 +12,8 @@ class TLS_Analyze:
                                     "handshake": b'\x16', "application_data": b'\x17'}
         self.define_protocol_version = {
             "TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
-        self.define_size = {"version" 2:, "content_type": 1, "length": 2, "handshak_length": 3, "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
+        self.define_size = {"version": 2, "content_type": 1, "length": 2, "handshak_length": 3,
+                            "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
 
     def TLS_Record_Layer(self):
         self.content_type = self.define_content_type["handshake"]
@@ -33,7 +34,7 @@ class TLS_Analyze:
 
     def Handshake_Body(self):
         self.handshak_version = self.define_protocol_version["TLS1.2"]
-        self.random = make_random()
+        self.random = self.make_random()
         self.session_id_length = b'\x00'
         self.session_id = b''
         self.ciper_suites_length = b''
@@ -75,7 +76,7 @@ class TLS_Analyze:
 
         if hasattr(self, 'session_id_length'):
             self.session_id_length = len(
-                self.session_id).to_bytes(self.define_size["session_id"], 'big')  # length is 2
+                self.session_id).to_bytes(self.define_size["session_id_length"], 'big')  # length is 2
 
         if hasattr(self, 'ciper_suites_length'):
             self.ciper_suites_length = len(
@@ -89,24 +90,26 @@ class TLS_Analyze:
             self.length = len(self.Handshake_Header_byte() +
                               self.Handshake_Body_byte()).to_bytes(self.define_size["length"], 'big')
 
-    def make_random():
+    def make_random(self):
         sum = b""
         for i in range(32):
             x = random.randrange(256)
             sum = x.to_bytes(1, 'big') + bytes(sum)
         return sum
 
-    def separate_str(str, point_length, len):
+    def separate_str(self, str, point_length, len):
         separate_data = b''
         for i in range(point_length, len):
-            separate_data = str[i] + separate_data
+            separate_data = str[i].to_bytes(1, 'big') + separate_data
         point_length = len + point_length
-        return point_length eparate_data
+        print(separate_data)
+        return point_length, separate_data
 
     def Analyze_Packet(self, str):
         point_length = 0
-        point_length, self.content_type = separate_str(
-            str, point_length, self.define_size("content_type"))
+        point_length, self.content_type = self.separate_str(
+            str, point_length, self.define_size["content_type"])
+
         for key, val in self.define_content_type.items():
             if self.content_type == val:
                 print(key)
@@ -114,7 +117,7 @@ class TLS_Analyze:
 
 def main():
     port = 443
-    destination_ip = "127.0.0.1"
+    destination_ip = "8.8.8.8"
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         try:
@@ -136,7 +139,9 @@ def main():
         sock.send(tls_byte)
 
         recv_data = sock.recv(1024)
-        Analyze_Packet(recv_data)
+        tls_recv = TLS_Analyze()
+        tls.TLS_Record_Layer()
+        tls_recv.Analyze_Packet(recv_data)
         recv_data = sock.recv(1024)
         print(recv_data)
 
