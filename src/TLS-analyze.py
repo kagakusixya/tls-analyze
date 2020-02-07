@@ -12,7 +12,7 @@ class TLS_Analyze:
                                     "handshake": b'\x16', "application_data": b'\x17'}
         self.define_protocol_version = {
             "TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
-        self.define_size{"length": 2, "handshak_length": 3, "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
+        self.define_size = {"version" 2: , "content_type": 1, "length": 2, "handshak_length": 3, "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
 
     def TLS_Record_Layer(self):
         self.content_type = self.define_content_type["handshake"]
@@ -96,11 +96,19 @@ class TLS_Analyze:
             sum = x.to_bytes(1, 'big') + bytes(sum)
         return sum
 
-    def separate_str(str,len_start,len):
+    def separate_str(str, point_length, len):
         separate_data = b''
-        for i in range(len_start,len):
+        for i in range(point_length, len):
             separate_data = str[i] + separate_data
-        return separate_data
+        point_length = len + point_length
+        return point_length eparate_data
+
+    def Analyze_Packet(self, str):
+        point_length = 0
+        point_length,self.content_type  = separate_str(str, point_length, self.define_size("content_type"))
+        for key,val in self.define_content_type.items():
+            if self.content_type == val:
+                print(key)
 
 def main():
     port = 443
@@ -126,7 +134,7 @@ def main():
         sock.send(tls_byte)
 
         recv_data = sock.recv(1024)
-        print(recv_data)
+        Analyze_Packet(recv_data)
         recv_data = sock.recv(1024)
         print(recv_data)
 
