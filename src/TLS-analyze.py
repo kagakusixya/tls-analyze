@@ -12,7 +12,7 @@ class TLS_Analyze:
                                     "handshake": b'\x16', "application_data": b'\x17'}
         self.define_protocol_version = {
             "TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
-        self.define_size = {"version" 2: , "content_type": 1, "length": 2, "handshak_length": 3, "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
+        self.define_size = {"version" 2:, "content_type": 1, "length": 2, "handshak_length": 3, "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
 
     def TLS_Record_Layer(self):
         self.content_type = self.define_content_type["handshake"]
@@ -105,10 +105,12 @@ class TLS_Analyze:
 
     def Analyze_Packet(self, str):
         point_length = 0
-        point_length,self.content_type  = separate_str(str, point_length, self.define_size("content_type"))
-        for key,val in self.define_content_type.items():
+        point_length, self.content_type = separate_str(
+            str, point_length, self.define_size("content_type"))
+        for key, val in self.define_content_type.items():
             if self.content_type == val:
                 print(key)
+
 
 def main():
     port = 443
