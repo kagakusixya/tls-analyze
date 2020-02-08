@@ -106,14 +106,17 @@ class TLS_Analyze:
         return point_length, separate_data
 
     def Analyze_Packet(self, str):
+
+        def Analyze_dict(dict,data):
+                for key, val in self.define_content_type.items():
+                    if self.content_type == val:
+                        print(key)
+
         point_length = 0
         point_length, self.content_type = self.separate_str(
             str, point_length, self.define_size["content_type"])
 
-        for key, val in self.define_content_type.items():
-            if self.content_type == val:
-                print(key)
-
+        Analyze_Dict(self.content_type,self.define_content_type)
 
 def main():
     port = 443
