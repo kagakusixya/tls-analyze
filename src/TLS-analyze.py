@@ -34,7 +34,7 @@ class TLS_Analyze:
 
     def Handshake_Body(self):
         self.handshak_version = self.define_protocol_version["TLS1.2"]
-        self.random = self.make_random()
+        self.random = make_random()
         self.session_id_length = b'\x00'
         self.session_id = b''
         self.ciper_suites_length = b''
@@ -90,12 +90,6 @@ class TLS_Analyze:
             self.length = len(self.Handshake_Header_byte() +
                               self.Handshake_Body_byte()).to_bytes(self.define_size["length"], 'big')
 
-    def make_random(self):
-        sum = b""
-        for i in range(32):
-            x = random.randrange(256)
-            sum = x.to_bytes(1, 'big') + bytes(sum)
-        return sum
 
     def separate_str(self, str, point_length, len):
         separate_data = b''
@@ -107,17 +101,23 @@ class TLS_Analyze:
 
     def Analyze_Packet(self, str):
 
-        def Analyze_dict(dict,data):
-                for key, val in self.define_content_type.items():
-                    if self.content_type == val:
-                        print(key)
-
         point_length = 0
         point_length, self.content_type = self.separate_str(
             str, point_length, self.define_size["content_type"])
 
-        Analyze_Dict(self.content_type,self.define_content_type)
+        Analyze_Dict(self.content_type, self.define_content_type)
 
+def make_random():
+    sum = b""
+    for i in range(32):
+        x = random.randrange(256)
+        sum = x.to_bytes(1, 'big') + bytes(sum)
+    return sum
+
+def Analyze_Dict(data, dict):
+    for key, val in dict.items():
+        if data == val:
+            print(key)
 def main():
     port = 443
     destination_ip = "8.8.8.8"
