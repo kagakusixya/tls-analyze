@@ -114,7 +114,7 @@ def make_random():
         sum = x.to_bytes(1, 'big') + bytes(sum)
     return sum
 
-def Analyze_Dict(data, dict):
+def analyze_dict(data, dict):
     for key, val in dict.items():
         if data == val:
             print(key)
