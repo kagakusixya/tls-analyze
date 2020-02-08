@@ -90,22 +90,33 @@ class TLS_Analyze:
             self.length = len(self.Handshake_Header_byte() +
                               self.Handshake_Body_byte()).to_bytes(self.define_size["length"], 'big')
 
-
-    def separate_str(self, str, point_length, len):
+    def Separate_Str(self, str, point_length, len):
         separate_data = b''
-        for i in range(point_length, len):
-            separate_data = str[i].to_bytes(1, 'big') + separate_data
+        for i in range(len):
+            separate_data = str[i +
+                                point_length].to_bytes(1, 'big') + separate_data
         point_length = len + point_length
-        print(separate_data)
         return point_length, separate_data
 
     def Analyze_Packet(self, str):
 
         point_length = 0
-        point_length, self.content_type = self.separate_str(
-            str, point_length, self.define_size["content_type"])
 
-        Analyze_Dict(self.content_type, self.define_content_type)
+        point_length, self.content_type = self.Separate_Str(
+            str, point_length, self.define_size["content_type"])
+        content_type_str = analyze_dict(
+            self.content_type, self.define_content_type)
+        print("content_type :  %s" % content_type_str)
+
+        point_length, self.version = self.Separate_Str(
+            str, point_length, self.define_size["version"])
+        version_str = analyze_dict(self.version, self.define_protocol_version)
+        print("version : %s" % version_str)
+
+        point_length, self.length = self.Separate_Str(
+            str, point_length, self.define_size["length"])
+        print("length : %d" % int.from_bytes(self.length, 'little'))
+
 
 def make_random():
     sum = b""
@@ -114,10 +125,15 @@ def make_random():
         sum = x.to_bytes(1, 'big') + bytes(sum)
     return sum
 
+
 def analyze_dict(data, dict):
+    result = None
     for key, val in dict.items():
         if data == val:
-            print(key)
+            result = key
+    return result
+
+
 def main():
     port = 443
     destination_ip = "8.8.8.8"
@@ -142,11 +158,11 @@ def main():
         sock.send(tls_byte)
 
         recv_data = sock.recv(1024)
+        print("-----recive data-----")
         tls_recv = TLS_Analyze()
         tls.TLS_Record_Layer()
         tls_recv.Analyze_Packet(recv_data)
         recv_data = sock.recv(1024)
-        print(recv_data)
 
         sleep(3)
 
