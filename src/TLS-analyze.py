@@ -136,7 +136,7 @@ def analyze_dict(data, dict):
 
 def main():
     port = 443
-    destination_ip = "8.8.8.8"
+    destination_ip = "127.0.0.1"
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         try:
@@ -162,7 +162,6 @@ def main():
         tls_recv = TLS_Analyze()
         tls.TLS_Record_Layer()
         tls_recv.Analyze_Packet(recv_data)
-        recv_data = sock.recv(1024)
 
         sleep(3)
 
