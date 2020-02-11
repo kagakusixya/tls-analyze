@@ -163,7 +163,7 @@ def main():
         tls.ssl_len()
         tls_byte = tls.TLS_Record_Layer_byte() + tls.Handshake_Header_byte() + \
             tls.Handshake_Body_byte()
-        tls.Analyze_Packet(tls_byte)
+            
         sock.send(tls_byte)
 
         recv_data = sock.recv(1024)
