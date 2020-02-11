@@ -95,8 +95,8 @@ class TLS_Analyze:
     def Separate_Str(self, str, point_length, len):
         separate_data = b''
         for i in range(len):
-            separate_data = str[i +
-                                point_length].to_bytes(1, 'big') + separate_data
+            separate_data = separate_data + str[i +
+                                                point_length].to_bytes(1, 'big')
         point_length = len + point_length
         return point_length, separate_data
 
@@ -117,12 +117,13 @@ class TLS_Analyze:
 
         point_length, self.length = self.Separate_Str(
             str, point_length, self.define_size["length"])
-        print("length : %d" % int.from_bytes(self.length, 'little'))
+        print("length : %d" % int.from_bytes(self.length, 'big'))
 
         # Handshake_Header
         point_length, self.handshake_type = self.Separate_Str(
             str, point_length, self.define_size["handshake_type"])
-        handshake_type_str = analyze_dict(self.handshake_type, self.define_handshake_type)
+        handshake_type_str = analyze_dict(
+            self.handshake_type, self.define_handshake_type)
         print("handshake_type : %s" % handshake_type_str)
 
 
@@ -162,7 +163,7 @@ def main():
         tls.ssl_len()
         tls_byte = tls.TLS_Record_Layer_byte() + tls.Handshake_Header_byte() + \
             tls.Handshake_Body_byte()
-
+        tls.Analyze_Packet(tls_byte)
         sock.send(tls_byte)
 
         recv_data = sock.recv(1024)
