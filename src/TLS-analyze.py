@@ -12,8 +12,10 @@ class TLS_Analyze:
                                     "handshake": b'\x16', "application_data": b'\x17'}
         self.define_protocol_version = {
             "TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
-        self.define_size = {"version": 2, "content_type": 1, "length": 2, "handshak_length": 3,
+        self.define_size = {"handshake_type": 1, "version": 2, "content_type": 1, "length": 2, "handshak_length": 3,
                             "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
+        self.define_handshake_type = {"hello_request": b'\x00', "client_hello": b'\x01', "server_hello": b'\x02', "certificate": b'\x0b', "server_key_exchange": b'\x0c',
+                                      "certificate_request": b'\x0d', "server_hello_done": b'\x0e', "certificate_verify": b'\x0f', "client_key_exchange": b'\x10', "finished": b'\x11'}
 
     def TLS_Record_Layer(self):
         self.content_type = self.define_content_type["handshake"]
@@ -25,7 +27,7 @@ class TLS_Analyze:
         return byte_data
 
     def Handshake_Header(self):
-        self.handshake_type = b'\x01'
+        self.handshake_type = self.define_handshake_type["client_hello"]
         self.handshak_length = b'\x00\x00\x00'
 
     def Handshake_Header_byte(self):
@@ -117,6 +119,12 @@ class TLS_Analyze:
             str, point_length, self.define_size["length"])
         print("length : %d" % int.from_bytes(self.length, 'little'))
 
+        # Handshake_Header
+        point_length, self.handshake_type = self.Separate_Str(
+            str, point_length, self.define_size["handshake_type"])
+        handshake_type_str = analyze_dict(self.handshake_type, self.define_handshake_type)
+        print("handshake_type : %s" % handshake_type_str)
+
 
 def make_random():
     sum = b""
@@ -160,7 +168,8 @@ def main():
         recv_data = sock.recv(1024)
         print("-----recive data-----")
         tls_recv = TLS_Analyze()
-        tls.TLS_Record_Layer()
+        tls_recv.TLS_Record_Layer()
+        tls_recv.Handshake_Header()
         tls_recv.Analyze_Packet(recv_data)
 
         sleep(3)
