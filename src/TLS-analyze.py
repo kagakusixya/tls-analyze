@@ -2,24 +2,13 @@ import random
 import socket
 from time import sleep
 
+from Define import *
 
 class TLS_Analyze:
-    def __init__(self):
-        self.Define()
-
-    def Define(self):
-        self.define_content_type = {"change_cipher_spec": b'\x14', "alert": b'\x15',
-                                    "handshake": b'\x16', "application_data": b'\x17'}
-        self.define_protocol_version = {
-            "TLS1.0": b'\x03\x01', "TLS1.2": b'\x03\x03'}
-        self.define_size = {"handshake_type": 1, "version": 2, "content_type": 1, "length": 2, "handshak_length": 3,
-                            "ciper_suites_length": 2, "session_id_length": 1, "compression_methods_length": 1, "extension_length": 2}
-        self.define_handshake_type = {"hello_request": b'\x00', "client_hello": b'\x01', "server_hello": b'\x02', "certificate": b'\x0b', "server_key_exchange": b'\x0c',
-                                      "certificate_request": b'\x0d', "server_hello_done": b'\x0e', "certificate_verify": b'\x0f', "client_key_exchange": b'\x10', "finished": b'\x11'}
 
     def TLS_Record_Layer(self):
-        self.content_type = self.define_content_type["handshake"]
-        self.version = self.define_protocol_version["TLS1.0"]
+        self.content_type = Define().define_content_type["handshake"]
+        self.version = Define().define_protocol_version["TLS1.0"]
         self.length = b'\x00\x00'
 
     def TLS_Record_Layer_byte(self):
@@ -27,7 +16,7 @@ class TLS_Analyze:
         return byte_data
 
     def Handshake_Header(self):
-        self.handshake_type = self.define_handshake_type["client_hello"]
+        self.handshake_type = Define().define_handshake_type["client_hello"]
         self.handshak_length = b'\x00\x00\x00'
 
     def Handshake_Header_byte(self):
@@ -35,7 +24,7 @@ class TLS_Analyze:
         return byte_data
 
     def Client_Hello(self):
-        self.handshak_version = self.define_protocol_version["TLS1.2"]
+        self.handshak_version = Define().define_protocol_version["TLS1.2"]
         self.random = make_random()
         self.session_id_length = b'\x00'
         self.session_id = b''
@@ -70,27 +59,27 @@ class TLS_Analyze:
 
         if hasattr(self, 'extension_length'):
             self.extension_length = len(
-                self.Extension_byte()).to_bytes(self.define_size["extension_length"], 'big')  # length is 2
+                self.Extension_byte()).to_bytes(Define().define_size["extension_length"], 'big')  # length is 2
 
         if hasattr(self, 'compression_methods_length'):
             self.compression_methods_length = len(
-                self.compression_methods).to_bytes(self.define_size["compression_methods_length"], 'big')  # length is 1
+                self.compression_methods).to_bytes(Define().define_size["compression_methods_length"], 'big')  # length is 1
 
         if hasattr(self, 'session_id_length'):
             self.session_id_length = len(
-                self.session_id).to_bytes(self.define_size["session_id_length"], 'big')  # length is 2
+                self.session_id).to_bytes(Define().define_size["session_id_length"], 'big')  # length is 2
 
         if hasattr(self, 'ciper_suites_length'):
             self.ciper_suites_length = len(
-                self.ciper_suites).to_bytes(self.define_size["ciper_suites_length"], 'big')  # length is 2
+                self.ciper_suites).to_bytes(Define().define_size["ciper_suites_length"], 'big')  # length is 2
 
         if hasattr(self, 'handshak_length'):
             self.handshak_length = len(
-                self.Client_Hello_byte()).to_bytes(self.define_size["handshak_length"], 'big')
+                self.Client_Hello_byte()).to_bytes(Define().define_size["handshak_length"], 'big')
 
-        if self.content_type == self.define_content_type["handshake"]:
+        if self.content_type == Define().define_content_type["handshake"]:
             self.length = len(self.Handshake_Header_byte() +
-                              self.Client_Hello_byte()).to_bytes(self.define_size["length"], 'big')
+                              self.Client_Hello_byte()).to_bytes(Define().define_size["length"], 'big')
 
     def Separate_Str(self, str, point_length, len):
         separate_data = b''
@@ -105,25 +94,25 @@ class TLS_Analyze:
         point_length = 0
 
         point_length, self.content_type = self.Separate_Str(
-            str, point_length, self.define_size["content_type"])
+            str, point_length, Define().define_size["content_type"])
         content_type_str = analyze_dict(
-            self.content_type, self.define_content_type)
+            self.content_type, Define().define_content_type)
         print("content_type :  %s" % content_type_str)
 
         point_length, self.version = self.Separate_Str(
-            str, point_length, self.define_size["version"])
-        version_str = analyze_dict(self.version, self.define_protocol_version)
+            str, point_length, Define().define_size["version"])
+        version_str = analyze_dict(self.version, Define().define_protocol_version)
         print("version : %s" % version_str)
 
         point_length, self.length = self.Separate_Str(
-            str, point_length, self.define_size["length"])
+            str, point_length, Define().define_size["length"])
         print("length : %d" % int.from_bytes(self.length, 'big'))
 
         # Handshake_Header
         point_length, self.handshake_type = self.Separate_Str(
-            str, point_length, self.define_size["handshake_type"])
+            str, point_length, Define().define_size["handshake_type"])
         handshake_type_str = analyze_dict(
-            self.handshake_type, self.define_handshake_type)
+            self.handshake_type, Define().define_handshake_type)
         print("handshake_type : %s" % handshake_type_str)
 
 
