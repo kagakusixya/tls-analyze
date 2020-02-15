@@ -34,7 +34,7 @@ class TLS_Analyze:
         byte_data = self.handshake_type + self.handshak_length
         return byte_data
 
-    def Handshake_Body(self):
+    def Client_Hello(self):
         self.handshak_version = self.define_protocol_version["TLS1.2"]
         self.random = make_random()
         self.session_id_length = b'\x00'
@@ -46,7 +46,7 @@ class TLS_Analyze:
         self.extension_length = b'\x00\x00'
         self.extensions = b''
 
-    def Handshake_Body_byte(self):
+    def Client_Hello_byte(self):
         byte_data = self.handshak_version + self.random + self.session_id_length + self.session_id + \
             self.ciper_suites_length + self.ciper_suites + \
             self.compression_methods_length + self.compression_methods + \
@@ -86,11 +86,11 @@ class TLS_Analyze:
 
         if hasattr(self, 'handshak_length'):
             self.handshak_length = len(
-                self.Handshake_Body_byte()).to_bytes(self.define_size["handshak_length"], 'big')
+                self.Client_Hello_byte()).to_bytes(self.define_size["handshak_length"], 'big')
 
         if self.content_type == self.define_content_type["handshake"]:
             self.length = len(self.Handshake_Header_byte() +
-                              self.Handshake_Body_byte()).to_bytes(self.define_size["length"], 'big')
+                              self.Client_Hello_byte()).to_bytes(self.define_size["length"], 'big')
 
     def Separate_Str(self, str, point_length, len):
         separate_data = b''
@@ -157,13 +157,13 @@ def main():
         tls = TLS_Analyze()
         tls.TLS_Record_Layer()
         tls.Handshake_Header()
-        tls.Handshake_Body()
+        tls.Client_Hello()
         tls.Extension()
         tls.extensions = tls.Extension_byte()
         tls.ssl_len()
         tls_byte = tls.TLS_Record_Layer_byte() + tls.Handshake_Header_byte() + \
-            tls.Handshake_Body_byte()
-            
+            tls.Client_Hello_byte()
+
         sock.send(tls_byte)
 
         recv_data = sock.recv(1024)
