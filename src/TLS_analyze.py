@@ -1,4 +1,3 @@
-import random
 import socket
 from time import sleep
 
@@ -46,9 +45,6 @@ class TLS_Analyze:
         print("handshake_type : %s" % handshake_type_str)
 
 
-
-
-
 def analyze_dict(data, dict):
     result = None
     for key, val in dict.items():
@@ -74,7 +70,8 @@ def main():
         client_hello.Client_Hello_len()
         handshake_header = Handshake_Header()
         handshake_header.Handshake_Header_len(client_hello.Client_Hello_byte())
-        tls_record_layer.TLS_Record_Layer_len(handshake_header.Handshake_Header_byte() + client_hello.Client_Hello_byte())
+        tls_record_layer.TLS_Record_Layer_len(
+            handshake_header.Handshake_Header_byte() + client_hello.Client_Hello_byte())
 
         tls_byte = tls_record_layer.TLS_Record_Layer_byte() + handshake_header.Handshake_Header_byte() + \
             client_hello.Client_Hello_byte()
