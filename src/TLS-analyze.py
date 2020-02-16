@@ -143,14 +143,17 @@ def main():
             return
         print("tcp connected")
         tls = TLS_Analyze()
-        tls.Handshake_Header()
         tls.Client_Hello()
         tls.Extension()
         tls.extensions = tls.Extension_byte()
         tls_record_layer = TLS_Record_Layer()
         tls.ssl_len()
-        tls_record_layer.TLS_Record_Layer_len(tls.Handshake_Header_byte() + tls.Client_Hello_byte())
-        tls_byte = tls_record_layer.TLS_Record_Layer_byte() + tls.Handshake_Header_byte() + \
+
+        handshake_header = Handshake_Header()
+        handshake_header.Handshake_Header_len(tls.Client_Hello_byte())
+        tls_record_layer.TLS_Record_Layer_len(handshake_header.Handshake_Header_byte() + tls.Client_Hello_byte())
+
+        tls_byte = tls_record_layer.TLS_Record_Layer_byte() + handshake_header.Handshake_Header_byte() + \
             tls.Client_Hello_byte()
 
         sock.send(tls_byte)
