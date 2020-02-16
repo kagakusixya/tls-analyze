@@ -3,6 +3,8 @@ import socket
 from time import sleep
 
 from Define import *
+from TLS_Struct import *
+
 
 class TLS_Analyze:
 
@@ -77,10 +79,6 @@ class TLS_Analyze:
             self.handshak_length = len(
                 self.Client_Hello_byte()).to_bytes(Define().define_size["handshak_length"], 'big')
 
-        if self.content_type == Define().define_content_type["handshake"]:
-            self.length = len(self.Handshake_Header_byte() +
-                              self.Client_Hello_byte()).to_bytes(Define().define_size["length"], 'big')
-
     def Separate_Str(self, str, point_length, len):
         separate_data = b''
         for i in range(len):
@@ -101,7 +99,8 @@ class TLS_Analyze:
 
         point_length, self.version = self.Separate_Str(
             str, point_length, Define().define_size["version"])
-        version_str = analyze_dict(self.version, Define().define_protocol_version)
+        version_str = analyze_dict(
+            self.version, Define().define_protocol_version)
         print("version : %s" % version_str)
 
         point_length, self.length = self.Separate_Str(
@@ -144,18 +143,19 @@ def main():
             return
         print("tcp connected")
         tls = TLS_Analyze()
-        tls.TLS_Record_Layer()
         tls.Handshake_Header()
         tls.Client_Hello()
         tls.Extension()
         tls.extensions = tls.Extension_byte()
+        tls_record_layer = TLS_Record_Layer()
         tls.ssl_len()
-        tls_byte = tls.TLS_Record_Layer_byte() + tls.Handshake_Header_byte() + \
+        tls_record_layer.TLS_Record_Layer_len(tls.Handshake_Header_byte() + tls.Client_Hello_byte())
+        tls_byte = tls_record_layer.TLS_Record_Layer_byte() + tls.Handshake_Header_byte() + \
             tls.Client_Hello_byte()
 
         sock.send(tls_byte)
 
-        recv_data = sock.recv(1024)
+        recv_data = sock.recv(2048)
         print("-----recive data-----")
         tls_recv = TLS_Analyze()
         tls_recv.TLS_Record_Layer()
