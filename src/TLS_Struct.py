@@ -27,9 +27,8 @@ class Handshake_Header:
         return byte_data
 
     def Handshake_Header_len(self, str):
-        if hasattr(self, 'handshak_length'):
-            self.handshak_length = len(str).to_bytes(
-                Define().define_size["handshak_length"], 'big')
+        self.handshak_length = len(str).to_bytes(
+            Define().define_size["handshak_length"], 'big')
 
 
 class Client_Hello:
@@ -55,21 +54,17 @@ class Client_Hello:
         return byte_data
 
     def Client_Hello_len(self):
-        if hasattr(self, 'extension_length'):
-            self.extension_length = len(
-                self.Extension_byte()).to_bytes(Define().define_size["extension_length"], 'big')  # length is 2
+        self.extension_length = len(self.Extension_byte()).to_bytes(
+            Define().define_size["extension_length"], 'big')  # length is 2
 
-        if hasattr(self, 'compression_methods_length'):
-            self.compression_methods_length = len(
-                self.compression_methods).to_bytes(Define().define_size["compression_methods_length"], 'big')  # length is 1
+        self.compression_methods_length = len(self.compression_methods).to_bytes(
+            Define().define_size["compression_methods_length"], 'big')  # length is 1
 
-        if hasattr(self, 'session_id_length'):
-            self.session_id_length = len(
-                self.session_id).to_bytes(Define().define_size["session_id_length"], 'big')  # length is 2
+        self.session_id_length = len(self.session_id).to_bytes(
+            Define().define_size["session_id_length"], 'big')  # length is 2
 
-        if hasattr(self, 'ciper_suites_length'):
-            self.ciper_suites_length = len(
-                self.ciper_suites).to_bytes(Define().define_size["ciper_suites_length"], 'big')  # length is 2
+        self.ciper_suites_length = len(self.ciper_suites).to_bytes(
+            Define().define_size["ciper_suites_length"], 'big')  # length is 2
 
     def Extension(self):
         self.ec_point_formats = b'\x00\x0b\x00\x04\x03\x00\x01\x02'
@@ -83,6 +78,8 @@ class Client_Hello:
         byte_data = self.ec_point_formats + self.supported_groups + self.sessionticket_tls + \
             self.encrypt_then_mac + self.extended_master_secret + self.signature_algorithms
         return byte_data
+
+
 def make_random():
     sum = b""
     for i in range(32):
