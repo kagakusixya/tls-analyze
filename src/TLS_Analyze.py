@@ -44,6 +44,11 @@ class TLS_Analyze:
             handshake_header.handshake_type, Define().define_handshake_type)
         print("handshake_type : %s" % handshake_type_str)
 
+        point_length, handshake_header.handshak_length = self.Separate_Str(
+            str, point_length, Define().define_size["handshak_length"])
+        print("handshak_length : %d" % int.from_bytes(
+            handshake_header.handshak_length, 'big'))
+
 
 def analyze_dict(data, dict):
     result = None
