@@ -80,6 +80,24 @@ class Client_Hello:
         return byte_data
 
 
+class Server_Hello:
+    def __init__(self):
+        self.handshak_version = Define().define_protocol_version["TLS1.2"]
+        self.random = make_random()
+        self.session_id_length = b'\x00'
+        self.session_id = b''
+        self.ciper_suite = b''
+        self.compression_method = b'\x00'
+        self.extension_length = b'\x00\x00'
+        self.extensions = b''
+
+    def Server_Hello_byte(self):
+        byte_data = self.handshak_version + self.random + self.session_id_length + \
+            self.ciper_suite + self.compression_method + \
+            self.extension_length + self.extensions
+        return byte_data
+
+
 def make_random():
     sum = b""
     for i in range(32):
