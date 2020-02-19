@@ -49,6 +49,26 @@ class TLS_Analyze:
         print("handshak_length : %d" % int.from_bytes(
             handshake_header.handshak_length, 'big'))
 
+        if   Define().define_handshake_type["hello_request"] == handshake_header.handshake_type:
+            print("hello_request")
+        elif Define().define_handshake_type["client_hello"] == handshake_header.handshake_type:
+            print("client_hello")
+        elif Define().define_handshake_type["server_hello"] == handshake_header.handshake_type:
+            print("server_hello")
+        elif Define().define_handshake_type["certificate"] == handshake_header.handshake_type:
+            print("certificate")
+        elif Define().define_handshake_type["server_key_exchange"] == handshake_header.handshake_type:
+            print("server_key_exchange")
+        elif Define().define_handshake_type["certificate_request"] == handshake_header.handshake_type:
+            print("certificate_request")
+        elif Define().define_handshake_type["server_hello_done"] == handshake_header.handshake_type:
+            print("server_hello_done")
+        elif Define().define_handshake_type["certificate_verify"] == handshake_header.handshake_type:
+            print("certificate_verify")
+        elif Define().define_handshake_type["client_key_exchange"] == handshake_header.handshake_type:
+            print("client_key_exchange")
+        elif Define().define_handshake_type["finished"] == handshake_header.handshake_type:
+            print("finished")
 
 def analyze_dict(data, dict):
     result = None
