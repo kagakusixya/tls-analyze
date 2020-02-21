@@ -49,12 +49,15 @@ class TLS_Analyze:
         print("handshak_length : %d" % int.from_bytes(
             handshake_header.handshak_length, 'big'))
 
-        if   Define().define_handshake_type["hello_request"] == handshake_header.handshake_type:
+        if Define().define_handshake_type["hello_request"] == handshake_header.handshake_type:
             print("hello_request")
         elif Define().define_handshake_type["client_hello"] == handshake_header.handshake_type:
             print("client_hello")
         elif Define().define_handshake_type["server_hello"] == handshake_header.handshake_type:
-            print("server_hello")
+            handshake = self.Server_Hello_Analyze(str[point_length:  point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')])
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["certificate"] == handshake_header.handshake_type:
             print("certificate")
         elif Define().define_handshake_type["server_key_exchange"] == handshake_header.handshake_type:
@@ -69,6 +72,53 @@ class TLS_Analyze:
             print("client_key_exchange")
         elif Define().define_handshake_type["finished"] == handshake_header.handshake_type:
             print("finished")
+        else:
+            print("handshake_type err %s" & handshake_header.handshake_type)
+
+    def Server_Hello_Analyze(self, str):
+
+        server_hello = Server_Hello()
+        point_length = 0
+
+        print("--Server_Hello_Analyze---")
+
+        point_length, server_hello.handshak_version = self.Separate_Str(
+            str, point_length, Define().define_size["handshak_version"])
+        handshak_version_str = analyze_dict(
+            server_hello.handshak_version, Define().define_protocol_version)
+        print("handshak_version :  %s" % handshak_version_str)
+
+        point_length, server_hello.random = self.Separate_Str(
+            str, point_length, Define().define_size["random"])
+        print("random :  %s" % server_hello.random)
+
+        point_length, server_hello.session_id_length = self.Separate_Str(
+            str, point_length, Define().define_size["session_id_length"])
+        print("session_id_length : %d" % int.from_bytes(
+            server_hello.session_id_length, 'big'))
+
+        point_length, server_hello.session_id = self.Separate_Str(
+            str, point_length,  int.from_bytes(server_hello.session_id_length, 'big'))
+        print("session_id : %s" % server_hello.session_id_length)
+
+        point_length, server_hello.ciper_suite = self.Separate_Str(
+            str, point_length, Define().define_size["ciper_suite"])
+        print("ciper_suite : %s" % server_hello.ciper_suite)
+
+        point_length, server_hello.compression_method = self.Separate_Str(
+            str, point_length, Define().define_size["compression_method"])
+        print("compression_method : %s" % server_hello.compression_method)
+
+        point_length, server_hello.extension_length = self.Separate_Str(
+            str, point_length,  Define().define_size["extension_length"])
+        print("extension_length : %d" % int.from_bytes(
+            server_hello.extension_length, 'big'))
+
+        point_length, server_hello.extensions = self.Separate_Str(
+            str, point_length, int.from_bytes(
+                server_hello.extension_length, 'big'))
+        print("session_id_length : %s" % server_hello.extensions)
+
 
 def analyze_dict(data, dict):
     result = None

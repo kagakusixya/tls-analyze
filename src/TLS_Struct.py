@@ -100,7 +100,7 @@ class Server_Hello:
 
 def make_random():
     sum = b""
-    for i in range(32):
+    for i in range(Define().define_size["random"]):
         x = random.randrange(256)
         sum = x.to_bytes(1, 'big') + bytes(sum)
     return sum
