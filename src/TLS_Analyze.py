@@ -117,7 +117,7 @@ class TLS_Analyze:
         point_length, server_hello.extensions = self.Separate_Str(
             str, point_length, int.from_bytes(
                 server_hello.extension_length, 'big'))
-        print("session_id_length : %s" % server_hello.extensions)
+        print("extensions : %s" % server_hello.extensions)
 
 
 def analyze_dict(data, dict):
