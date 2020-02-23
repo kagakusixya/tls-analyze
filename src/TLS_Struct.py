@@ -37,8 +37,8 @@ class Client_Hello:
         self.random = make_random()
         self.session_id_length = b'\x00'
         self.session_id = b''
-        self.ciper_suites_length = b''
-        self.ciper_suites = b'\xc0\x2c\xc0\x30\xc0\x2b\xc0\x2f\xcc\xa9\xcc\xa8\x00\x9f\x00\x9e\xcc\xaa\xc0\xaf\xc0\xad\xc0\xae\xc0\xac\xc0\x24\xc0\x28\xc0\x23\xc0\x27\xc0\x0a\xc0\x14\xc0\x09\xc0\x13\xc0\xa3\xc0\x9f\xc0\xa2\xc0\x9e\x00\x6b\x00\x67\x00\x39\x00\x33\x00\x9d\x00\x9c\xc0\xa1\xc0\x9d\xc0\xa0\xc0\x9c\x00\x3d\x00\x3c\x00\x35\x00\x2f\x00\xff'
+        self.cipher_suites_length = b''
+        self.cipher_suites = b'\xc0\x2c\xc0\x30\xc0\x2b\xc0\x2f\xcc\xa9\xcc\xa8\x00\x9f\x00\x9e\xcc\xaa\xc0\xaf\xc0\xad\xc0\xae\xc0\xac\xc0\x24\xc0\x28\xc0\x23\xc0\x27\xc0\x0a\xc0\x14\xc0\x09\xc0\x13\xc0\xa3\xc0\x9f\xc0\xa2\xc0\x9e\x00\x6b\x00\x67\x00\x39\x00\x33\x00\x9d\x00\x9c\xc0\xa1\xc0\x9d\xc0\xa0\xc0\x9c\x00\x3d\x00\x3c\x00\x35\x00\x2f\x00\xff'
         self.compression_methods_length = b'\x01'
         self.compression_methods = b'\x00'
         self.extension_length = b'\x00\x00'
@@ -48,7 +48,7 @@ class Client_Hello:
 
     def Client_Hello_byte(self):
         byte_data = self.handshak_version + self.random + self.session_id_length + self.session_id + \
-            self.ciper_suites_length + self.ciper_suites + \
+            self.cipher_suites_length + self.cipher_suites + \
             self.compression_methods_length + self.compression_methods + \
             self.extension_length + self.extensions
         return byte_data
@@ -63,8 +63,8 @@ class Client_Hello:
         self.session_id_length = len(self.session_id).to_bytes(
             Define().define_size["session_id_length"], 'big')  # length is 2
 
-        self.ciper_suites_length = len(self.ciper_suites).to_bytes(
-            Define().define_size["ciper_suites_length"], 'big')  # length is 2
+        self.cipher_suites_length = len(self.cipher_suites).to_bytes(
+            Define().define_size["cipher_suites_length"], 'big')  # length is 2
 
     def Extension(self):
         self.ec_point_formats = b'\x00\x0b\x00\x04\x03\x00\x01\x02'
@@ -86,14 +86,14 @@ class Server_Hello:
         self.random = make_random()
         self.session_id_length = b'\x00'
         self.session_id = b''
-        self.ciper_suite = b''
+        self.cipher_suite = b''
         self.compression_method = b'\x00'
         self.extension_length = b'\x00\x00'
         self.extensions = b''
 
     def Server_Hello_byte(self):
         byte_data = self.handshak_version + self.random + self.session_id_length + \
-            self.ciper_suite + self.compression_method + \
+            self.cipher_suite + self.compression_method + \
             self.extension_length + self.extensions
         return byte_data
 

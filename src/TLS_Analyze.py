@@ -101,9 +101,9 @@ class TLS_Analyze:
             str, point_length,  int.from_bytes(server_hello.session_id_length, 'big'))
         print("session_id : %s" % server_hello.session_id_length)
 
-        point_length, server_hello.ciper_suite = self.Separate_Str(
-            str, point_length, Define().define_size["ciper_suite"])
-        print("ciper_suite : %s" % server_hello.ciper_suite)
+        point_length, server_hello.cipher_suite = self.Separate_Str(
+            str, point_length, Define().define_size["cipher_suite"])
+        print("cipher_suite : %s" % server_hello.cipher_suite)
 
         point_length, server_hello.compression_method = self.Separate_Str(
             str, point_length, Define().define_size["compression_method"])
