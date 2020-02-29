@@ -6,7 +6,11 @@ from TLS_Struct import *
 
 
 class TLS_Analyze:
-
+    def __init__(self):
+        self.done = 0
+        # 0 is no done
+        # 1 is done
+        # -1 is alert
     def Separate_Str(self, str, point_length, len):
         separate_data = b''
         for i in range(len):
@@ -15,11 +19,10 @@ class TLS_Analyze:
         point_length = len + point_length
         return point_length, separate_data
 
-    def Analyze_Packet(self, str):
+    def Analyze_Packet(self, str, point_length):
 
         tls_record_layer = TLS_Record_Layer()
         handshake_header = Handshake_Header()
-        point_length = 0
 
         point_length, tls_record_layer.content_type = self.Separate_Str(
             str, point_length, Define().define_size["content_type"])
@@ -39,7 +42,8 @@ class TLS_Analyze:
 
         if tls_record_layer.content_type == Define().define_content_type["alert"]:
             print("alert err")
-            return
+            self.done = -1
+            return point_length
         # Handshake_Header
         point_length, handshake_header.handshake_type = self.Separate_Str(
             str, point_length, Define().define_size["handshake_type"])
@@ -64,20 +68,37 @@ class TLS_Analyze:
                 handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["certificate"] == handshake_header.handshake_type:
             print("certificate")
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["server_key_exchange"] == handshake_header.handshake_type:
             print("server_key_exchange")
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["certificate_request"] == handshake_header.handshake_type:
             print("certificate_request")
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["server_hello_done"] == handshake_header.handshake_type:
             print("server_hello_done")
+            self.done = 1
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["certificate_verify"] == handshake_header.handshake_type:
             print("certificate_verify")
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["client_key_exchange"] == handshake_header.handshake_type:
             print("client_key_exchange")
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         elif Define().define_handshake_type["finished"] == handshake_header.handshake_type:
             print("finished")
+            point_length = point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')
         else:
-            print("handshake_type err %s" & handshake_header.handshake_type)
+            print("handshake_type err : %s" % handshake_header.handshake_type)
+
+        return point_length
 
     def Server_Hello_Analyze(self, str):
 
@@ -149,6 +170,7 @@ def main():
         client_hello.extensions = client_hello.Extension_byte()
         client_hello.Client_Hello_len()
         handshake_header = Handshake_Header()
+        handshake_header.handshake_type = Define().define_handshake_type["client_hello"]
         handshake_header.Handshake_Header_len(client_hello.Client_Hello_byte())
         tls_record_layer.TLS_Record_Layer_len(
             handshake_header.Handshake_Header_byte() + client_hello.Client_Hello_byte())
@@ -158,12 +180,12 @@ def main():
 
         sock.send(tls_byte)
 
-        recv_data = sock.recv(2048)
-        print("-----recive data-----")
         tls_recv = TLS_Analyze()
-        tls_recv.Analyze_Packet(recv_data)
-
-        sleep(3)
+        recv_data = sock.recv(1024)
+        point_length = 0
+        while tls_recv.done == 0:
+            print("---------------------------------------------------------------------")
+            point_length = tls_recv.Analyze_Packet(recv_data,point_length)
 
 
 if __name__ == '__main__':

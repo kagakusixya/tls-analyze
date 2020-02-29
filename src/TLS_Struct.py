@@ -19,7 +19,7 @@ class TLS_Record_Layer:
 
 class Handshake_Header:
     def __init__(self):
-        self.handshake_type = Define().define_handshake_type["client_hello"]
+        self.handshake_type = b''
         self.handshak_length = b'\x00\x00\x00'
 
     def Handshake_Header_byte(self):
