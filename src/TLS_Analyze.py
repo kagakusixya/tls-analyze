@@ -37,6 +37,9 @@ class TLS_Analyze:
             str, point_length, Define().define_size["length"])
         print("length : %d" % int.from_bytes(tls_record_layer.length, 'big'))
 
+        if tls_record_layer.content_type == Define().define_content_type["alert"]:
+            print("alert err")
+            return
         # Handshake_Header
         point_length, handshake_header.handshake_type = self.Separate_Str(
             str, point_length, Define().define_size["handshake_type"])
@@ -48,6 +51,7 @@ class TLS_Analyze:
             str, point_length, Define().define_size["handshak_length"])
         print("handshak_length : %d" % int.from_bytes(
             handshake_header.handshak_length, 'big'))
+
 
         if Define().define_handshake_type["hello_request"] == handshake_header.handshake_type:
             print("hello_request")
@@ -103,7 +107,7 @@ class TLS_Analyze:
 
         point_length, server_hello.cipher_suite = self.Separate_Str(
             str, point_length, Define().define_size["cipher_suite"])
-        print("cipher_suite : %s" % server_hello.cipher_suite)
+        print("cipher_suite : %s" % analyze_dict(server_hello.cipher_suite, Define().define_cipher_suite))
 
         point_length, server_hello.compression_method = self.Separate_Str(
             str, point_length, Define().define_size["compression_method"])
@@ -141,6 +145,7 @@ def main():
         print("tcp connected")
         tls_record_layer = TLS_Record_Layer()
         client_hello = Client_Hello()
+        client_hello.cipher_suites = Define().define_cipher_suite["TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"]
         client_hello.extensions = client_hello.Extension_byte()
         client_hello.Client_Hello_len()
         handshake_header = Handshake_Header()
