@@ -3,7 +3,7 @@ from time import sleep
 
 from Define import *
 from TLS_Struct import *
-
+import base64
 
 class TLS_Analyze:
     def __init__(self):
@@ -59,42 +59,53 @@ class TLS_Analyze:
 
         if Define().define_handshake_type["hello_request"] == handshake_header.handshake_type:
             print("hello_request")
+
         elif Define().define_handshake_type["client_hello"] == handshake_header.handshake_type:
             print("client_hello")
+
         elif Define().define_handshake_type["server_hello"] == handshake_header.handshake_type:
             handshake = self.Server_Hello_Analyze(str[point_length:  point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')])
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         elif Define().define_handshake_type["certificate"] == handshake_header.handshake_type:
-            print("certificate")
+            handshake = self.Certficate(str[point_length:  point_length + int.from_bytes(
+                handshake_header.handshak_length, 'big')])
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         elif Define().define_handshake_type["server_key_exchange"] == handshake_header.handshake_type:
             print("server_key_exchange")
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         elif Define().define_handshake_type["certificate_request"] == handshake_header.handshake_type:
             print("certificate_request")
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         elif Define().define_handshake_type["server_hello_done"] == handshake_header.handshake_type:
             print("server_hello_done")
             self.done = 1
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         elif Define().define_handshake_type["certificate_verify"] == handshake_header.handshake_type:
             print("certificate_verify")
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         elif Define().define_handshake_type["client_key_exchange"] == handshake_header.handshake_type:
             print("client_key_exchange")
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         elif Define().define_handshake_type["finished"] == handshake_header.handshake_type:
             print("finished")
             point_length = point_length + int.from_bytes(
                 handshake_header.handshak_length, 'big')
+
         else:
             print("handshake_type err : %s" % handshake_header.handshake_type)
 
@@ -143,6 +154,27 @@ class TLS_Analyze:
             str, point_length, int.from_bytes(
                 server_hello.extension_length, 'big'))
         print("extensions : %s" % server_hello.extensions)
+
+    def Certficate(self, str):
+        certificate = Certificate()
+        point_length = 0
+
+        print("--Certificate---")
+
+        point_length, certificate.certificate_struct_length = self.Separate_Str(
+            str, point_length, Define().define_size["certificate_struct_length"])
+        print("certificate_struct_length: %d" % int.from_bytes(
+            certificate.certificate_struct_length, 'big'))
+
+        point_length, certificate.certificate_length = self.Separate_Str(
+            str, point_length, Define().define_size["certificate_length"])
+        print("certificate_length: %d" % int.from_bytes(
+            certificate.certificate_length, 'big'))
+
+        point_length, certificate.certificate = self.Separate_Str(
+            str, point_length, int.from_bytes(
+                certificate.certificate_length, 'big'))
+        print("certificate : %s" % certificate.certificate.hex())
 
 
 def analyze_dict(data, dict):
