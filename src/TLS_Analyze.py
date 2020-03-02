@@ -215,7 +215,7 @@ def main():
         tls_recv = TLS_Analyze()
         recv_data = sock.recv(1024)
         point_length = 0
-        while tls_recv.done == 0:
+        while tls_recv.done == 0: # 0 is completed
             print("---------------------------------------------------------------------")
             point_length = tls_recv.Analyze_Packet(recv_data,point_length)
 
