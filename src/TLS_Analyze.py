@@ -46,10 +46,10 @@ class TLS_Analyze:
             str, point_length, Define().define_size["handshak_length"])
 
         if Define().define_handshake_type["hello_request"] == tls_basic.handshake_header.handshake_type:
-            print("hello_request")
+            pass
 
         elif Define().define_handshake_type["client_hello"] == tls_basic.handshake_header.handshake_type:
-            print("client_hello")
+            pass
 
         elif Define().define_handshake_type["server_hello"] == tls_basic.handshake_header.handshake_type:
             tls_basic.payload = self.Server_Hello_Analyze(str[point_length:  point_length + int.from_bytes(
@@ -64,33 +64,27 @@ class TLS_Analyze:
                 tls_basic.handshake_header.handshak_length, 'big')
 
         elif Define().define_handshake_type["server_key_exchange"] == tls_basic.handshake_header.handshake_type:
-            print("server_key_exchange")
             point_length = point_length + int.from_bytes(
                 tls_basic.handshake_header.handshak_length, 'big')
 
         elif Define().define_handshake_type["certificate_request"] == tls_basic.handshake_header.handshake_type:
-            print("certificate_request")
             point_length = point_length + int.from_bytes(
                 tls_basic.handshake_header.handshak_length, 'big')
 
         elif Define().define_handshake_type["server_hello_done"] == tls_basic.handshake_header.handshake_type:
-            print("server_hello_done")
             self.done = 1
             point_length = point_length + int.from_bytes(
                 tls_basic.handshake_header.handshak_length, 'big')
 
         elif Define().define_handshake_type["certificate_verify"] == tls_basic.handshake_header.handshake_type:
-            print("certificate_verify")
             point_length = point_length + int.from_bytes(
                 tls_basic.handshake_header.handshak_length, 'big')
 
         elif Define().define_handshake_type["client_key_exchange"] == tls_basic.handshake_header.handshake_type:
-            print("client_key_exchange")
             point_length = point_length + int.from_bytes(
                 tls_basic.handshake_header.handshak_length, 'big')
 
         elif Define().define_handshake_type["finished"] == tls_basic.handshake_header.handshake_type:
-            print("finished")
             point_length = point_length + int.from_bytes(
                 tls_basic.handshake_header.handshak_length, 'big')
 

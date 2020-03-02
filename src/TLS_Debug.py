@@ -4,6 +4,7 @@ from Define import *
 class TLS_Debug:
 
     def TLS_Record_Layer_Show(self, tls_record_layer):
+        print("-------------------------------------------------")
         content_type_str = analyze_dict(
             tls_record_layer.content_type, Define().define_content_type)
         print("content_type :  %s" % content_type_str)
