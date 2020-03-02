@@ -109,6 +109,11 @@ class Certificate:
     def Certificate(self):
         self.certificate_struct_length + self.certificate_length + self.certificate
 
+class TLS_Basic:
+    def __init__(self):
+        self.tls_record_layer  = TLS_Record_Layer()
+        self.handshake_header  = Handshake_Header()
+        self.payload         =  None
 
 def make_random():
     sum = b""
