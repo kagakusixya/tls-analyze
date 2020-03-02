@@ -4,7 +4,7 @@ from time import sleep
 from Define import *
 from TLS_Struct import *
 from TLS_Debug import *
-
+from Chipher import *
 
 class TLS_Analyze:
     def __init__(self):
@@ -151,7 +151,6 @@ def main():
         except ConnectionRefusedError as err:
             print(err)
             return
-        print("tcp connected")
         tls_record_layer = TLS_Record_Layer()
         client_hello = Client_Hello()
         client_hello.cipher_suites = Define(
@@ -179,5 +178,6 @@ def main():
                 recv_data, point_length)
             tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type,Define().define_handshake_type)] = tls_basic
 
+        Chipher().Create_Pem(tls_basics["certificate"].payload.certificate)
 if __name__ == '__main__':
     main()
