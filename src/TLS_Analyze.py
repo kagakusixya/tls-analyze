@@ -6,6 +6,7 @@ from TLS_Struct import *
 from TLS_Debug import *
 from Chipher import *
 
+
 class TLS_Analyze:
     def __init__(self):
         self.done = 0
@@ -136,10 +137,10 @@ class TLS_Analyze:
             str, point_length, Define().define_size["certificate_length"])
 
         point_length, certificate.certificate = self.Separate_Str(
-            str, point_length, int.from_bytes(
-                certificate.certificate_length, 'big'))
+            str, point_length, int.from_bytes(certificate.certificate_length, 'big'))
 
         return certificate
+
 
 def main():
     port = 443
@@ -176,8 +177,11 @@ def main():
         while tls_recv.done == 0:  # 0 is completed
             point_length, tls_basic = tls_recv.Analyze_Packet(
                 recv_data, point_length)
-            tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type,Define().define_handshake_type)] = tls_basic
+            tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type, Define(
+            ).define_handshake_type)] = tls_basic
 
         Chipher().Create_Pem(tls_basics["certificate"].payload.certificate)
+
+
 if __name__ == '__main__':
     main()
