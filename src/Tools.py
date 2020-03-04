@@ -1,6 +1,6 @@
 import base64
 
-class Chipher:
+class Tools:
     def Create_Pem(self,str):
 
         str = base64.b64encode(str).decode()
