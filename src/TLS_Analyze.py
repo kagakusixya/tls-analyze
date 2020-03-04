@@ -189,7 +189,7 @@ def main():
             tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type, Define(
             ).define_handshake_type)] = tls_basic
         crt = Tools().Create_Pem(tls_basics["certificate"].payload.certificate)
-        print(crt)
+        Tools().Out_Crtificate(crt,"my")
 
 if __name__ == '__main__':
     main()
