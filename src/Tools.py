@@ -5,11 +5,12 @@ class Tools:
 
         str = base64.b64encode(str).decode()
         i = 0
-        print("-----BEGIN CERTIFICATE-----")
+        crt = "-----BEGIN CERTIFICATE-----\n"
         for c in str:
-            print(c,end="")
+            crt = crt + c
             i = i + 1
             if i%64 == 0:
-                print("")
-        print("")
-        print("-----END CERTIFICATE-----")
+                crt = crt + "\n"
+        crt = crt + "\n"
+        crt = crt + "-----END CERTIFICATE-----\n"
+        return crt

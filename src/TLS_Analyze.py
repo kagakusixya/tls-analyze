@@ -188,8 +188,8 @@ def main():
                 recv_data, point_length)
             tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type, Define(
             ).define_handshake_type)] = tls_basic
-        Tools().Create_Pem(tls_basics["certificate"].payload.certificate)
-
+        crt = Tools().Create_Pem(tls_basics["certificate"].payload.certificate)
+        print(crt)
 
 if __name__ == '__main__':
     main()
