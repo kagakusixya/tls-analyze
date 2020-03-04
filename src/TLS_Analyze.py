@@ -9,10 +9,11 @@ from Chipher import *
 
 class TLS_Analyze:
     def __init__(self):
-        self.done = 0
+        self.done = 2
         # 0 is no done
         # 1 is done
         # -1 is alert
+        # 2  continue reception
 
     def Separate_Str(self, str, point_length, len):
         separate_data = b''
@@ -34,6 +35,11 @@ class TLS_Analyze:
 
         point_length, tls_basic.tls_record_layer.length = self.Separate_Str(
             str, point_length, Define().define_size["length"])
+
+        if len(str) - point_length < int.from_bytes(tls_basic.tls_record_layer.length, 'big'):
+            self.done = 2
+            point_length = 0
+            return point_length, tls_basic
 
         if tls_basic.tls_record_layer.content_type == Define().define_content_type["alert"]:
             print("alert err")
@@ -92,7 +98,7 @@ class TLS_Analyze:
         else:
             print("handshake_type err : %s" %
                   tls_basic.handshake_header.handshake_type)
-        TLS_Debug().Show(tls_basic)
+
         return point_length, tls_basic
 
     def Server_Hello_Analyze(self, str):
@@ -171,15 +177,17 @@ def main():
         sock.send(tls_byte)
 
         tls_recv = TLS_Analyze()
-        recv_data = sock.recv(1024)
         point_length = 0
         tls_basics = {}
-        while tls_recv.done == 0:  # 0 is completed
+        recv_data = b""
+        while tls_recv.done != 1:  # 0 is completed
+            if tls_recv.done == 2:
+                recv_data = recv_data + sock.recv(6000)
+                tls_recv.done = 0
             point_length, tls_basic = tls_recv.Analyze_Packet(
                 recv_data, point_length)
             tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type, Define(
             ).define_handshake_type)] = tls_basic
-
         Chipher().Create_Pem(tls_basics["certificate"].payload.certificate)
 
 
