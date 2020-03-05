@@ -17,8 +17,12 @@ class Tools:
         return crt
 
     def Out_Crtificate(self, str, name):
-        f = open('crt/' + name + '.crt', 'x')
-
+        try:
+            f = open('crt/' + name + '.crt', 'x')
+        except  FileExistsError as e:
+            print(e)
+            print("Out_Crtificate err: maybe this name is already used.")
+            return
         f.write(str)
 
         f.close()
