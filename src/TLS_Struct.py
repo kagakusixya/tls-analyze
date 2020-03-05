@@ -104,7 +104,7 @@ class Certificate:
     def __init__(self):
         self.certificate_struct_length = b''
         self.certificate_length = b''
-        self.certificate = b''
+        self.certificate = []
 
     def Certificate(self):
         self.certificate_struct_length + self.certificate_length + self.certificate

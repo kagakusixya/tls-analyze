@@ -139,11 +139,14 @@ class TLS_Analyze:
         point_length, certificate.certificate_struct_length = self.Separate_Str(
             str, point_length, Define().define_size["certificate_struct_length"])
 
-        point_length, certificate.certificate_length = self.Separate_Str(
-            str, point_length, Define().define_size["certificate_length"])
+        while point_length < len(str):
+            point_length, certificate.certificate_length = self.Separate_Str(
+                str, point_length, Define().define_size["certificate_length"])
 
-        point_length, certificate.certificate = self.Separate_Str(
-            str, point_length, int.from_bytes(certificate.certificate_length, 'big'))
+            point_length, c = self.Separate_Str(
+                str, point_length, int.from_bytes(certificate.certificate_length, 'big'))
+
+            certificate.certificate.append(c)
 
         return certificate
 
@@ -188,8 +191,7 @@ def main():
                 recv_data, point_length)
             tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type, Define(
             ).define_handshake_type)] = tls_basic
-        crt = Tools().Create_Pem(tls_basics["certificate"].payload.certificate)
-        Tools().Out_Crtificate(crt,"my")
+        crt = Tools().Create_Pem(tls_basics["certificate"].payload.certificate[0])
 
 if __name__ == '__main__':
     main()
