@@ -106,9 +106,6 @@ class Certificate:
         self.certificate_length = b''
         self.certificate = []
 
-    def Certificate(self):
-        self.certificate_struct_length + self.certificate_length + self.certificate
-
 class TLS_Basic:
     def __init__(self):
         self.tls_record_layer  = TLS_Record_Layer()
