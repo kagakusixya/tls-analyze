@@ -54,7 +54,8 @@ class TLS_Debug:
         print("certificate_length: %d" % int.from_bytes(
             certificate.certificate_length, 'big'))
 
-        print("certificate : %s" % certificate.certificate.hex())
+        for crt in certificate.certificate:
+            print("certificate : %s" % crt)
 
     def Show(self, tls_basic):
         self.TLS_Record_Layer_Show(tls_basic.tls_record_layer)

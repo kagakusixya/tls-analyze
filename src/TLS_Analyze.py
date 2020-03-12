@@ -7,11 +7,12 @@ from TLS_Struct import *
 
 class TLS_Analyze:
     def __init__(self):
-        self.done = 2
+        self.done = 0
+        self.point_length = 0
+        self.tls_basics = {}
         # 0 is no done
         # 1 is done
         # -1 is alert
-        # 2  continue reception
 
     def Separate_Str(self, str, point_length, len):
         separate_data = b''
@@ -33,11 +34,6 @@ class TLS_Analyze:
 
         point_length, tls_basic.tls_record_layer.length = self.Separate_Str(
             str, point_length, Define().define_size["length"])
-
-        if len(str) - point_length < int.from_bytes(tls_basic.tls_record_layer.length, 'big'):
-            self.done = 2
-            point_length = 0
-            return point_length, tls_basic
 
         if tls_basic.tls_record_layer.content_type == Define().define_content_type["alert"]:
             print("alert err")
