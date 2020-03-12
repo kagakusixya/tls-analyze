@@ -137,9 +137,10 @@ class TLS_Analyze:
             point_length, certificate.certificate_length = self.Separate_Str(
                 str, point_length, Define().define_size["certificate_length"])
 
-            point_length, c = self.Separate_Str(
+            point_length, crt = self.Separate_Str(
                 str, point_length, int.from_bytes(certificate.certificate_length, 'big'))
 
-            certificate.certificate.append(c)
+            certificate.certificate.append(crt)
+
 
         return certificate
