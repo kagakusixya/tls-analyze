@@ -48,14 +48,14 @@ class Client_Hello:
 
         self.Extension()
 
-    def Client_Hello_byte(self):
+    def byte(self):
         byte_data = self.handshak_version + self.random + self.session_id_length + self.session_id + \
             self.cipher_suites_length + self.cipher_suites + \
             self.compression_methods_length + self.compression_methods + \
             self.extension_length + self.extensions
         return byte_data
 
-    def Client_Hello_len(self):
+    def len(self):
         self.extension_length = len(self.Extension_byte()).to_bytes(
             Define().define_size["extension_length"], 'big')  # length is 2
 
@@ -111,6 +111,13 @@ class TLS_Basic:
         self.tls_record_layer  = TLS_Record_Layer()
         self.handshake_header  = Handshake_Header()
         self.payload         =  None
+
+    def setlen(self):
+        self.payload.len()
+        self.tls_record_layer.TLS_Record_Layer_len(
+            self.handshake_header.Handshake_Header_byte() + self.payload.byte())
+        self.handshake_header.Handshake_Header_len(self.payload.byte())
+
 
 def make_random():
     sum = b""
