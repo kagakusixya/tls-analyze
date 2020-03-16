@@ -28,7 +28,7 @@ class TLS_Debug:
             server_hello.handshak_version, Define().define_protocol_version)
         print("handshak_version :  %s" % handshak_version_str)
 
-        print("random :  %s" % server_hello.random)
+        print("random :  %s" % server_hello.random.hex())
 
         print("session_id_length : %d" % int.from_bytes(
             server_hello.session_id_length, 'big'))
@@ -56,7 +56,7 @@ class TLS_Debug:
             certificate.certificate_length, 'big'))
 
         for crt in certificate.certificate:
-            print("certificate : %s" % crt)
+            print("certificate : %s" % crt.hex())
 
     def Server_Key_Exchange(self, server_key_exchange):
 
