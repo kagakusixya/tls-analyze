@@ -49,10 +49,10 @@ class TLS_Debug:
 
         print("--Certificate--")
 
-        print("certificate_struct_length: %d" % int.from_bytes(
+        print("certificate_struct_length : %d" % int.from_bytes(
             certificate.certificate_struct_length, 'big'))
 
-        print("certificate_length: %d" % int.from_bytes(
+        print("certificate_length : %d" % int.from_bytes(
             certificate.certificate_length, 'big'))
 
         for crt in certificate.certificate:
