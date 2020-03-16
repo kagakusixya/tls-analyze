@@ -35,6 +35,8 @@ def main():
         tls_byte = tls_basic.tls_record_layer.TLS_Record_Layer_byte() + tls_basic.handshake_header.Handshake_Header_byte() + \
             tls_basic.payload.byte()
 
+        TLS_Debug().Show(tls_basic)
+
         sock.send(tls_byte)
 
         tls_analyze = TLS_Analyze()
@@ -48,7 +50,6 @@ def main():
             except socket.timeout :
                 break
             recv_all = recv_all  + recv_segment
-            print(len(recv_segment))
 
         while tls_analyze.done == 0:  # 0 is completed
 
