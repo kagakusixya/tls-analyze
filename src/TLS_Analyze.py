@@ -65,6 +65,8 @@ class TLS_Analyze:
                 tls_basic.handshake_header.handshak_length, 'big')
 
         elif Define().define_handshake_type["server_key_exchange"] == tls_basic.handshake_header.handshake_type:
+            tls_basic.payload = self.Server_Key_Exchange(
+                str[point_length: point_length + int.from_bytes(tls_basic.handshake_header.handshak_length, 'big')])
             point_length = point_length + int.from_bytes(
                 tls_basic.handshake_header.handshak_length, 'big')
 
@@ -144,3 +146,35 @@ class TLS_Analyze:
 
 
         return certificate
+
+    def Server_Key_Exchange(self, str):
+        server_key_exchange = Server_Key_Exchange()
+        point_length = 0
+
+        point_length, server_key_exchange.curve_type = self.Separate_Str(
+            str, point_length, Define().define_size["curve_type"])
+
+        point_length, server_key_exchange.named_curve = self.Separate_Str(
+            str, point_length, Define().define_size["named_curve"])
+
+        point_length, server_key_exchange.pubkey_length = self.Separate_Str(
+            str, point_length, Define().define_size["pubkey_length"])
+
+        point_length, server_key_exchange.pubkey = self.Separate_Str(
+            str, point_length, int.from_bytes(
+                server_key_exchange.pubkey_length, 'big'))
+
+        point_length, server_key_exchange.algorithms_hash = self.Separate_Str(
+            str, point_length, Define().define_size["algorithms_hash"])
+
+        point_length, server_key_exchange.algorithms_signature = self.Separate_Str(
+            str, point_length, Define().define_size["algorithms_signature"])
+
+        point_length, server_key_exchange.signature_length = self.Separate_Str(
+            str, point_length, Define().define_size["signature_length"])
+
+        point_length, server_key_exchange.signature = self.Separate_Str(
+            str, point_length, int.from_bytes(
+                server_key_exchange.signature_length, 'big'))
+
+        return server_key_exchange

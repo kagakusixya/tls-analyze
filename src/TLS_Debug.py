@@ -35,7 +35,8 @@ class TLS_Debug:
 
         print("session_id : %s" % server_hello.session_id_length)
 
-        print("cipher_suite : %s" % analyze_dict(server_hello.cipher_suite, Define().define_cipher_suite))
+        print("cipher_suite : %s" % analyze_dict(
+            server_hello.cipher_suite, Define().define_cipher_suite))
 
         print("compression_method : %s" % server_hello.compression_method)
 
@@ -57,6 +58,32 @@ class TLS_Debug:
         for crt in certificate.certificate:
             print("certificate : %s" % crt)
 
+    def Server_Key_Exchange(self, server_key_exchange):
+
+        print("--Server_Key_Exchange--")
+
+        print("curve_type : %s" % analyze_dict(
+            server_key_exchange.curve_type, Define().define_curve_type))
+
+        print("named_curve : %s" % analyze_dict(
+            server_key_exchange.named_curve, Define().define_named_curve))
+
+        print("pubkey_length : %d" % int.from_bytes(
+            server_key_exchange.pubkey_length, 'big'))
+
+        print("pubkey : %s" % server_key_exchange.pubkey.hex())
+
+        print("algorithms_hash : %s" % analyze_dict(
+            server_key_exchange.algorithms_hash, Define().define_algorithms_hash))
+
+        print("algorithms_signature : %s" % analyze_dict(
+            server_key_exchange.algorithms_signature, Define().define_algorithms_signature))
+
+        print("signature_length : %d" % int.from_bytes(
+            server_key_exchange.signature_length, 'big'))
+
+        print("signature : %s" % server_key_exchange.signature.hex())
+
     def Show(self, tls_basic):
         self.TLS_Record_Layer_Show(tls_basic.tls_record_layer)
         self.Handshake_Header(tls_basic.handshake_header)
@@ -74,8 +101,7 @@ class TLS_Debug:
             self.Certficate(tls_basic.payload)
 
         elif Define().define_handshake_type["server_key_exchange"] == tls_basic.handshake_header.handshake_type:
-            print("server_key_exchange")
-
+            self.Server_Key_Exchange(tls_basic.payload)
 
         elif Define().define_handshake_type["certificate_request"] == tls_basic.handshake_header.handshake_type:
             print("certificate_request")
@@ -93,9 +119,8 @@ class TLS_Debug:
             print("finished")
 
         else:
-            print("handshake_type err : %s" % tls_basic.handshake_header.handshake_type)
-
-
+            print("handshake_type err : %s" %
+                  tls_basic.handshake_header.handshake_type)
 
 
 def analyze_dict(data, dict):

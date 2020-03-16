@@ -105,6 +105,17 @@ class Certificate:
         self.certificate_length = b''
         self.certificate = []
 
+class Server_Key_Exchange:
+    def __init__(self):
+        self.curve_type = b''
+        self.named_curve = b''
+        self.pubkey_length = b''
+        self.pubkey = b''
+        self.algorithms_hash = b''
+        self.algorithms_signature = b''
+        self.signature_length = b''
+        self.signature = b''
+
 class TLS_Basic:
     def __init__(self):
         self.tls_record_layer  = TLS_Record_Layer()
