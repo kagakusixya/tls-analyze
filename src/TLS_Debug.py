@@ -107,7 +107,7 @@ class TLS_Debug:
             print("certificate_request")
 
         elif Define().define_handshake_type["server_hello_done"] == tls_basic.handshake_header.handshake_type:
-            print("server_hello_done")
+            pass
 
         elif Define().define_handshake_type["certificate_verify"] == tls_basic.handshake_header.handshake_type:
             print("certificate_verify")
