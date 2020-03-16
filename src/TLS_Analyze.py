@@ -1,6 +1,3 @@
-import socket
-from time import sleep
-
 from Define import *
 from TLS_Struct import *
 
