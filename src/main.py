@@ -53,8 +53,7 @@ def main():
 
         while tls_analyze.done == 0:  # 0 is completed
 
-            tls_analyze.point_length, tls_basic = tls_analyze.Analyze_Packet(
-                recv_all, tls_analyze.point_length)
+            tls_basic = tls_analyze.Analyze_Packet(recv_all)
 
             TLS_Debug().Show(tls_basic)
 
