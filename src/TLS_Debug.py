@@ -1,5 +1,5 @@
 from Define import *
-
+from Tools import *
 
 class TLS_Debug:
 
@@ -121,11 +121,3 @@ class TLS_Debug:
         else:
             print("handshake_type err : %s" %
                   tls_basic.handshake_header.handshake_type)
-
-
-def analyze_dict(data, dict):
-    result = None
-    for key, val in dict.items():
-        if data == val:
-            result = key
-    return result
