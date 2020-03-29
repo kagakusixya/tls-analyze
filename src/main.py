@@ -7,6 +7,7 @@ from TLS_Struct import *
 from TLS_Debug import *
 from Tools import *
 
+
 def main():
     port = 443
     destination_ip = "127.0.0.1"
@@ -19,13 +20,13 @@ def main():
             return
 
         tls_basic = TLS_Basic()
-        #client_hello
+        # client_hello
         tls_basic.payload = Client_Hello()
         tls_basic.payload.cipher_suites = Define(
         ).define_cipher_suite["TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"]
         tls_basic.payload.extensions = tls_basic.payload.Extension_byte()
 
-        #handshake_header
+        # handshake_header
         tls_basic.handshake_header = Handshake_Header()
         tls_basic.handshake_header.handshake_type = Define(
         ).define_handshake_type["client_hello"]
@@ -35,7 +36,7 @@ def main():
         tls_byte = tls_basic.tls_record_layer.TLS_Record_Layer_byte() + tls_basic.handshake_header.Handshake_Header_byte() + \
             tls_basic.payload.byte()
 
-        TLS_Debug().Show(tls_basic)
+        # TLS_Debug().Show(tls_basic)
 
         sock.send(tls_byte)
 
@@ -44,12 +45,12 @@ def main():
         sock.settimeout(0.5)
         recv_segment = b''
         recv_all = b''
-        while 1 :
+        while 1:
             try:
                 recv_segment = sock.recv(1500)
-            except socket.timeout :
+            except socket.timeout:
                 break
-            recv_all = recv_all  + recv_segment
+            recv_all = recv_all + recv_segment
 
         while tls_analyze.done == 0:  # 0 is completed
 
@@ -59,6 +60,18 @@ def main():
 
             tls_analyze.tls_basics[analyze_dict(tls_basic.handshake_header.handshake_type, Define(
             ).define_handshake_type)] = tls_basic
+        server_key_exchange = tls_analyze.tls_basics["server_key_exchange"]
+        #TLS_Debug().Show(server_key_exchange)
+
+        curve_type_byte = server_key_exchange.payload.named_curve
+        ecdhe = Tools()
+
+        server_pubkey = ecdhe.ECDHE_Key_Point(
+            server_key_exchange.payload.pubkey, curve_type_byte)
+
+        ecdhe.ECDHE(server_pubkey, curve_type_byte)
+        pre_master_scret = ecdhe.sharekey
+        print(pre_master_scret)
 
 if __name__ == '__main__':
     main()
