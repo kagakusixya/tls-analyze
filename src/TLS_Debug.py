@@ -84,10 +84,16 @@ class TLS_Debug:
 
         print("signature : %s" % server_key_exchange.signature.hex())
 
-    def Show(self, tls_basic):
-        self.TLS_Record_Layer_Show(tls_basic.tls_record_layer)
-        self.Handshake_Header(tls_basic.handshake_header)
+    def Client_Key_Exchange(self, client_key_exchange):
 
+        print("--Client_Key_Exchange--")
+
+        print("pubkey_length : %d" % int.from_bytes(
+            client_key_exchange.pubkey_length, 'big'))
+
+        print("pubkey : %s" % client_key_exchange.pubkey.hex())
+
+    def Handshake_Type_If(self, tls_basic):
         if Define().define_handshake_type["hello_request"] == tls_basic.handshake_header.handshake_type:
             print("hello_request")
 
@@ -121,3 +127,8 @@ class TLS_Debug:
         else:
             print("handshake_type err : %s" %
                   tls_basic.handshake_header.handshake_type)
+
+    def Show(self, tls_basic):
+        self.TLS_Record_Layer_Show(tls_basic.tls_record_layer)
+        self.Handshake_Header(tls_basic.handshake_header)
+        self.Handshake_Type_If(tls_basic)

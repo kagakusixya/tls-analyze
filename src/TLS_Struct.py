@@ -116,6 +116,19 @@ class Server_Key_Exchange:
         self.signature_length = b''
         self.signature = b''
 
+class Client_Key_Exchange:
+    def __init__(self):
+        self.pubkey_length = b''
+        self.pubkey = b''
+
+    def byte(self):
+        byte_data = self.pubkey_length + self.pubkey
+        return  byte_data
+
+    def len(self):
+        self.pubkey_length = len(self.pubkey).to_bytes(
+            Define().define_size["pubkey_length"], 'big')
+
 class TLS_Basic:
     def __init__(self):
         self.tls_record_layer  = TLS_Record_Layer()
