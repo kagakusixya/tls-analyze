@@ -132,6 +132,7 @@ class Client_Key_Exchange:
 class TLS_Handshake_Basic:
     def __init__(self):
         self.tls_record_layer  = TLS_Record_Layer()
+        self.tls_record_layer.content_type = Define().define_content_type["handshake"]
         self.handshake_header  = Handshake_Header()
         self.payload         =  None
 
@@ -140,6 +141,15 @@ class TLS_Handshake_Basic:
         self.tls_record_layer.TLS_Record_Layer_len(
             self.handshake_header.Handshake_Header_byte() + self.payload.byte())
         self.handshake_header.Handshake_Header_len(self.payload.byte())
+
+class TLS_Change_Cipher_Spec_Basic:
+    def __init__(self):
+        self.tls_record_layer  = TLS_Record_Layer()
+        self.tls_record_layer.content_type = Define().define_content_type["change_cipher_spec"]
+        self.change_cipher_spec_message = b'\x01'
+
+    def setlen(self):
+        self.tls_record_layer.TLS_Record_Layer_len(self.change_cipher_spec_message)
 
 
 def make_random():

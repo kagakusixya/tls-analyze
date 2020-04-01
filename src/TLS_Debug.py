@@ -130,5 +130,19 @@ class TLS_Debug:
 
     def Show(self, tls_basic):
         self.TLS_Record_Layer_Show(tls_basic.tls_record_layer)
-        self.Handshake_Header(tls_basic.handshake_header)
-        self.Handshake_Type_If(tls_basic)
+        if Define().define_content_type["handshake"] == tls_basic.tls_record_layer.content_type:
+            self.Handshake_Header(tls_basic.handshake_header)
+            self.Handshake_Type_If(tls_basic)
+
+        elif Define().define_content_type["change_cipher_spec"] == tls_basic.tls_record_layer.content_type:
+            print("change_cipher_spec_message(default:01) : %s" % tls_basic.change_cipher_spec_message.hex())
+
+        elif Define().define_content_type["alert"] == tls_basic.tls_record_layer.content_type:
+            pass
+
+        elif Define().define_content_type["application_data"] == tls_basic.tls_record_layer.content_type:
+            pass
+
+        else:
+            print("content_type err : %s" %
+                  tls_basic.tls_record_layer.content_type)
