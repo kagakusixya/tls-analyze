@@ -21,7 +21,7 @@ class TLS_Analyze:
 
     def Analyze_Packet(self, str):
 
-        tls_basic = TLS_Basic()
+        tls_basic = TLS_Handshake_Basic()
 
         self.point_length, tls_basic.tls_record_layer.content_type = self.Separate_Str(
             str, self.point_length, Define().define_size["content_type"])
