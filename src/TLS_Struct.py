@@ -129,6 +129,16 @@ class Client_Key_Exchange:
         self.pubkey_length = len(self.pubkey).to_bytes(
             Define().define_size["pubkey_length"], 'big')
 
+class Finished:
+    def __init__(self):
+        self.finished_verify_data = b''
+
+    def byte(self):
+        return self.finished_verify_data
+
+    def len(self):
+        pass
+
 class TLS_Handshake_Basic:
     def __init__(self):
         self.tls_record_layer  = TLS_Record_Layer()

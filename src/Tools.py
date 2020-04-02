@@ -33,7 +33,7 @@ class Tools:
         f.close()
 
     def ECDHE_Key_RFC5480_Format(self):
-        return b'\x04' + self.pubkey.x.to_bytes(32, 'big').hex() + self.pubkey.y.to_bytes(32, 'big').hex()
+        return b'\x04' + self.pubkey.x.to_bytes(32, 'big') + self.pubkey.y.to_bytes(32, 'big')
 
     def ECDHE_Key_Point(self, rfc5480_pubkey, curve_type_byte):
 

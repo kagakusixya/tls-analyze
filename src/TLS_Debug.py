@@ -93,6 +93,13 @@ class TLS_Debug:
 
         print("pubkey : %s" % client_key_exchange.pubkey.hex())
 
+    def Finished(self, finished):
+
+        print("--Finished--")
+
+        print("finished_verify_data : %s" % finished.finished_verify_data.hex())
+
+
     def Handshake_Type_If(self, tls_basic):
         if Define().define_handshake_type["hello_request"] == tls_basic.handshake_header.handshake_type:
             print("hello_request")
@@ -119,10 +126,10 @@ class TLS_Debug:
             print("certificate_verify")
 
         elif Define().define_handshake_type["client_key_exchange"] == tls_basic.handshake_header.handshake_type:
-            print("client_key_exchange")
+            self.Client_Key_Exchange(tls_basic.payload)
 
         elif Define().define_handshake_type["finished"] == tls_basic.handshake_header.handshake_type:
-            print("finished")
+            self.Finished(tls_basic.payload)
 
         else:
             print("handshake_type err : %s" %

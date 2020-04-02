@@ -202,3 +202,8 @@ class TLS_Analyze:
                 server_key_exchange.signature_length, 'big'))
 
         return server_key_exchange
+
+    def Finished(self, str):
+
+        finished = Finished()
+        self.finished_verify_data = self.Separate_Str(str,point_length,Define().define_size["finished_verify_data"])
