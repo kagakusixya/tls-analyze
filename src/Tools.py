@@ -22,7 +22,7 @@ class Tools:
         crt = crt + "-----END CERTIFICATE-----\n"
         return crt
 
-    def Out_Crtificate(self, str, name):
+    def Out_Certificate(self, str, name):
         try:
             f = open('crt/' + name + '.crt', 'x')
         except FileExistsError as e:
