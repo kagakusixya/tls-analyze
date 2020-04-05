@@ -4,6 +4,7 @@ import base64
 from tinyec import ec
 from tinyec import registry
 import secrets
+import hashlib
 
 
 class Tools:
@@ -37,7 +38,8 @@ class Tools:
 
     def ECDHE_Key_Point(self, rfc5480_pubkey, curve_type_byte):
 
-        curve_type_str = analyze_dict(curve_type_byte,Define().define_named_curve)
+        curve_type_str = analyze_dict(
+            curve_type_byte, Define().define_named_curve)
         curve_type = registry.get_curve(curve_type_str)
 
         x_byte = rfc5480_pubkey[1:33]
@@ -51,7 +53,8 @@ class Tools:
 
     def ECDHE(self, server_pubkey, curve_type_byte):
 
-        curve_type_str = analyze_dict(curve_type_byte,Define().define_named_curve)
+        curve_type_str = analyze_dict(
+            curve_type_byte, Define().define_named_curve)
 
         curve = registry.get_curve(curve_type_str)
 
@@ -59,6 +62,25 @@ class Tools:
         self.pubkey = self.privkey * curve.g
 
         self.sharekey = self.privkey * server_pubkey
+
+    def P_hash(self, algo, secret, seed, size):
+        data = secret + seed
+        hmac = hashlib.sha256()
+        hmac.update(data)  # A(0)
+        a = hmac.digest()  # A(1)
+        sum = b""
+        i = 0
+        while i < size:
+            hmac = hashlib.sha256()
+            hmac.update(a + data)
+            a = hmac.digest()
+            sum = sum + a
+            i = len(sum)
+        return sum
+
+    def PRF(self, secret, label, seed, size):
+        return self.P_hash("sha256", secret, label + seed, size)
+
 
 def analyze_dict(data, dict):
     result = None
