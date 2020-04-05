@@ -22,6 +22,11 @@ class Tools:
         crt = crt + "-----END CERTIFICATE-----\n"
         return crt
 
+    def Separate_Certificate(self, str):
+        certificate_format = Certificate_Format()
+
+        return certificate_format
+
     def Out_Certificate(self, str, name):
         try:
             f = open('crt/' + name + '.crt', 'x')
@@ -88,3 +93,28 @@ def analyze_dict(data, dict):
         if data == val:
             result = key
     return result
+
+def separate_str(str, point_length, len):
+    separate_data = b''
+    for i in range(len):
+        separate_data = separate_data + str[i +
+                                            point_length].to_bytes(1, 'big')
+    point_length = len + point_length
+    return point_length, separate_data
+
+
+class Certificate_Format:
+    def __init__(self):
+        slef.size = 5
+
+        self.title_length = b''
+        self.title = b'ssh-rsa'
+        self.e_length = b''
+        self.e = b''
+        self.n_length = b''
+        self.n = b''
+
+    def byte(self):
+        data = self.title_length + self.title + \
+            self.e_length + self.e + self.n_length + self.n
+        return byte_data
