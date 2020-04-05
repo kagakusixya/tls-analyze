@@ -34,7 +34,7 @@ class Handshake_Header:
 class Client_Hello:
     def __init__(self):
         self.handshak_version = Define().define_protocol_version["TLS1.2"]
-        self.random = make_random()
+        self.random = make_random(Define().define_size["random"])
         self.session_id_length = b'\x00'
         self.session_id = b''
         self.cipher_suites_length = b''
@@ -84,7 +84,7 @@ class Client_Hello:
 class Server_Hello:
     def __init__(self):
         self.handshak_version = Define().define_protocol_version["TLS1.2"]
-        self.random = make_random()
+        self.random = make_random(Define().define_size["random"])
         self.session_id_length = b'\x00'
         self.session_id = b''
         self.cipher_suite = b''
@@ -152,6 +152,17 @@ class TLS_Handshake_Basic:
             self.handshake_header.Handshake_Header_byte() + self.payload.byte())
         self.handshake_header.Handshake_Header_len(self.payload.byte())
 
+class TLS_Handshake_Basic_Rh:
+    def __init__(self):
+        self.tls_record_layer  = TLS_Record_Layer()
+        self.tls_record_layer.content_type = Define().define_content_type["handshake"]
+        self.payload         =  None
+
+    def setlen(self):
+        self.payload.len()
+        self.tls_record_layer.TLS_Record_Layer_len(self.payload.byte())
+
+
 class TLS_Change_Cipher_Spec_Basic:
     def __init__(self):
         self.tls_record_layer  = TLS_Record_Layer()
@@ -162,9 +173,9 @@ class TLS_Change_Cipher_Spec_Basic:
         self.tls_record_layer.TLS_Record_Layer_len(self.change_cipher_spec_message)
 
 
-def make_random():
+def make_random(size):
     sum = b""
-    for i in range(Define().define_size["random"]):
+    for i in range(size):
         x = random.randrange(256)
         sum = x.to_bytes(1, 'big') + bytes(sum)
     return sum
