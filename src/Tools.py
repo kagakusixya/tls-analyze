@@ -1,10 +1,12 @@
 from Define import *
 
+import random
 import base64
 from tinyec import ec
 from tinyec import registry
 import secrets
 import hashlib
+from Crypto.Hash import HMAC, SHA256
 
 
 class Tools:
@@ -69,22 +71,36 @@ class Tools:
         self.sharekey = self.privkey * server_pubkey
 
     def P_hash(self, algo, secret, seed, size):
-        data = secret + seed
-        hmac = hashlib.sha256()
-        hmac.update(data)  # A(0)
-        a = hmac.digest()  # A(1)
-        sum = b""
-        i = 0
-        while i < size:
-            hmac = hashlib.sha256()
-            hmac.update(a + data)
-            a = hmac.digest()
-            sum = sum + a
-            i = len(sum)
-        return sum
+        #data = secret + seed
+        hmac = HMAC.new(secret, digestmod=SHA256)
+        #hmac = hashlib.sha256()
+        hmac.update(seed)
+        # hmac.update(data)  # A(0)
+        a = hmac.digest()
+        # a = hmac.digest()  # A(1)
+        result = b''
+        i = 1
+        #sum = b""
+        #i = 0
+        hmac = HMAC.new(secret, digestmod=SHA256)
+        b_hmac = HMAC.new(secret, digestmod=SHA256)
+        hmac.update(a + seed)
+        b_hmac.update(a)
+        result = result + hmac.digest()
+        a = result
+        b = b_hmac.digest()
+
+        hmac = HMAC.new(secret, digestmod=SHA256)
+        hmac.update(b + seed)
+        result = result + hmac.digest()
+        a = result
+        return result[:size]
 
     def PRF(self, secret, label, seed, size):
         return self.P_hash("sha256", secret, label + seed, size)
+
+    def Create_Premaster_Secret(self, version):
+        return version + make_random(46)
 
 
 def analyze_dict(data, dict):
@@ -94,6 +110,7 @@ def analyze_dict(data, dict):
             result = key
     return result
 
+
 def separate_str(str, point_length, len):
     separate_data = b''
     for i in range(len):
@@ -101,6 +118,14 @@ def separate_str(str, point_length, len):
                                             point_length].to_bytes(1, 'big')
     point_length = len + point_length
     return point_length, separate_data
+
+
+def make_random(size):
+    sum = b""
+    for i in range(size):
+        x = random.randrange(256)
+        sum = x.to_bytes(1, 'big') + bytes(sum)
+    return sum
 
 
 class Certificate_Format:
@@ -118,3 +143,23 @@ class Certificate_Format:
         data = self.title_length + self.title + \
             self.e_length + self.e + self.n_length + self.n
         return byte_data
+
+
+class Key_Block:
+    def __init__(self,str):
+        print(str)
+        self.client_write_MAC_key = b''
+        self.server_write_MAC_key = b''
+        self.client_write_key = str[:16]
+        print("client_write_key")
+        print(self.client_write_key)
+        self.server_write_key = str[16:32]
+        print(self.server_write_key)
+        self.client_write_IV = str[32:36]
+        print(self.client_write_IV)
+        self.server_write_IV = str[36:]
+        print(len(self.server_write_IV))
+    def byte(self):
+        byte_data = self.client_write_MAC_key + self.server_write_MAC_key + \
+            self.client_write_key + self.server_write_key + \
+            self.client_write_IV + self.server_write_IV

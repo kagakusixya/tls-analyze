@@ -1,6 +1,5 @@
-import random
-
 from Define import *
+from Tools import make_random
 
 
 class TLS_Record_Layer:
@@ -55,7 +54,7 @@ class Client_Hello:
         return byte_data
 
     def len(self):
-        self.extension_length = len(self.Extension_byte()).to_bytes(
+        self.extension_length = len(self.extensions).to_bytes(
             Define().define_size["extension_length"], 'big')  # length is 2
 
         self.compression_methods_length = len(self.compression_methods).to_bytes(
@@ -92,8 +91,8 @@ class Server_Hello:
         self.extension_length = b'\x00\x00'
         self.extensions = b''
 
-    def Server_Hello_byte(self):
-        byte_data = self.handshak_version + self.random + self.session_id_length + \
+    def byte(self):
+        byte_data = self.handshak_version + self.random + self.session_id_length + self.session_id + \
             self.cipher_suite + self.compression_method + \
             self.extension_length + self.extensions
         return byte_data
@@ -104,6 +103,13 @@ class Certificate:
         self.certificate_struct_length = b''
         self.certificate_length = b''
         self.certificate = []
+
+    def byte(self):
+        byte_data = self.certificate_struct_length + self.certificate_length
+        for certificate in self.certificate:
+            byte_data = byte_data + certificate
+        return byte_data
+
 
 class Server_Key_Exchange:
     def __init__(self):
@@ -116,6 +122,13 @@ class Server_Key_Exchange:
         self.signature_length = b''
         self.signature = b''
 
+    def byte(self):
+        byte_data = self.curve_type + self.named_curve + self.pubkey_length + self.pubkey + \
+            self.algorithms_hash + self.algorithms_signature + \
+            self.signature_length + self.signature
+        return byte_data
+
+
 class Client_Key_Exchange:
     def __init__(self):
         self.pubkey_length = b''
@@ -123,11 +136,12 @@ class Client_Key_Exchange:
 
     def byte(self):
         byte_data = self.pubkey_length + self.pubkey
-        return  byte_data
+        return byte_data
 
     def len(self):
         self.pubkey_length = len(self.pubkey).to_bytes(
             Define().define_size["pubkey_length"], 'big')
+
 
 class Finished:
     def __init__(self):
@@ -139,12 +153,14 @@ class Finished:
     def len(self):
         pass
 
+
 class TLS_Handshake_Basic:
     def __init__(self):
-        self.tls_record_layer  = TLS_Record_Layer()
-        self.tls_record_layer.content_type = Define().define_content_type["handshake"]
-        self.handshake_header  = Handshake_Header()
-        self.payload         =  None
+        self.tls_record_layer = TLS_Record_Layer()
+        self.tls_record_layer.content_type = Define(
+        ).define_content_type["handshake"]
+        self.handshake_header = Handshake_Header()
+        self.payload = None
 
     def setlen(self):
         self.payload.len()
@@ -152,11 +168,13 @@ class TLS_Handshake_Basic:
             self.handshake_header.Handshake_Header_byte() + self.payload.byte())
         self.handshake_header.Handshake_Header_len(self.payload.byte())
 
+
 class TLS_Handshake_Basic_Rh:
     def __init__(self):
-        self.tls_record_layer  = TLS_Record_Layer()
-        self.tls_record_layer.content_type = Define().define_content_type["handshake"]
-        self.payload         =  None
+        self.tls_record_layer = TLS_Record_Layer()
+        self.tls_record_layer.content_type = Define(
+        ).define_content_type["handshake"]
+        self.payload = None
 
     def setlen(self):
         self.payload.len()
@@ -165,17 +183,21 @@ class TLS_Handshake_Basic_Rh:
 
 class TLS_Change_Cipher_Spec_Basic:
     def __init__(self):
-        self.tls_record_layer  = TLS_Record_Layer()
-        self.tls_record_layer.content_type = Define().define_content_type["change_cipher_spec"]
+        self.tls_record_layer = TLS_Record_Layer()
+        self.tls_record_layer.content_type = Define(
+        ).define_content_type["change_cipher_spec"]
         self.change_cipher_spec_message = b'\x01'
 
     def setlen(self):
-        self.tls_record_layer.TLS_Record_Layer_len(self.change_cipher_spec_message)
+        self.tls_record_layer.TLS_Record_Layer_len(
+            self.change_cipher_spec_message)
+class Application_Data_Basic:
+    def __init__(self):
+        self.tls_record_layer = TLS_Record_Layer()
+        self.tls_record_layer.content_type = Define(
+        ).define_content_type["application_data"]
+        self.application_data = b''
 
-
-def make_random(size):
-    sum = b""
-    for i in range(size):
-        x = random.randrange(256)
-        sum = x.to_bytes(1, 'big') + bytes(sum)
-    return sum
+    def setlen(self):
+        self.tls_record_layer.TLS_Record_Layer_len(
+            self.application_data)
